@@ -10,7 +10,8 @@
     <properties>
         <release.branch.name>uvms-2.0.6-kili</release.branch.name>
         <javaee.version>7.0</javaee.version>
-		<config.model.version>2.0.5</config.model.version>
+		<config.model.version>2.0.7</config.model.version>
+        <project.scm.id>github</project.scm.id>
     </properties>
 
     <repositories>
@@ -74,6 +75,11 @@
                         <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
                         <artifactId>maven-scm-provider-svnjava</artifactId>
                         <version>2.1.1</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.maven.scm</groupId>
+                        <artifactId>maven-scm-provider-gitexe</artifactId>
+                        <version>1.8.1</version>
                     </dependency>
                 </dependencies>
                 <configuration>
