@@ -8,7 +8,7 @@
     <description>UnionVMS configuration management.</description>
 
     <properties>
-        <release.branch.name>uvms-2.0.6-kili</release.branch.name>
+        <release.branch.name>uvms-git-test2</release.branch.name>
         <javaee.version>7.0</javaee.version>
 		<config.model.version>2.0.7</config.model.version>
         <project.scm.id>github</project.scm.id>
