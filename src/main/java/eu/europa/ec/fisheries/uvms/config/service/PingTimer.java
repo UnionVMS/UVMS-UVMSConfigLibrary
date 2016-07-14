@@ -3,12 +3,12 @@ package eu.europa.ec.fisheries.uvms.config.service;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
+import javax.ejb.EJB;
 
 @Singleton
 @Startup
@@ -21,7 +21,7 @@ public class PingTimer {
      */
     final static Logger LOG = LoggerFactory.getLogger(PingTimer.class);
 
-    @Inject
+    @EJB
     UVMSConfigService configService;
 
     @Schedule(second = "0", minute = "*/5", hour = "*", persistent = false)

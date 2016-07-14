@@ -1,13 +1,13 @@
 /*
-﻿Developed with the contribution of the European Commission - Directorate General for Maritime Affairs and Fisheries
-© European Union, 2015-2016.
+ ﻿Developed with the contribution of the European Commission - Directorate General for Maritime Affairs and Fisheries
+ © European Union, 2015-2016.
 
-This file is part of the Integrated Fisheries Data Management (IFDM) Suite. The IFDM Suite is free software: you can
-redistribute it and/or modify it under the terms of the GNU General Public License as published by the
-Free Software Foundation, either version 3 of the License, or any later version. The IFDM Suite is distributed in
-the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. You should have received a
-copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
+ This file is part of the Integrated Fisheries Data Management (IFDM) Suite. The IFDM Suite is free software: you can
+ redistribute it and/or modify it under the terms of the GNU General Public License as published by the
+ Free Software Foundation, either version 3 of the License, or any later version. The IFDM Suite is distributed in
+ the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. You should have received a
+ copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 package eu.europa.ec.fisheries.uvms.config.service;
 
@@ -23,16 +23,17 @@ import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
 public interface UVMSConfigService {
 
     /**
-     *  Requests parameters from Config module and stores in the database.
-     *  If module is not registered, pushes current parameters to Config.
-     *  
-     *  @throws ExchangeServiceException if unsuccessful
+     * Requests parameters from Config module and stores in the database. If
+     * module is not registered, pushes current parameters to Config.
+     *
+     * @throws
+     * eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException
      */
     public void syncSettingsWithConfig() throws ConfigServiceException;
 
     /**
      * Updates a setting by setting a value or removing it.
-     * 
+     *
      * @param setting a setting
      * @param eventType an event type
      * @throws ConfigServiceException if unsuccessful
@@ -41,9 +42,9 @@ public interface UVMSConfigService {
 
     /**
      * Push setting to config
-     * 
-     * @param fromModule
+     *
      * @param setting
+     * @param remove
      * @return
      * @throws ConfigServiceException
      */
@@ -58,8 +59,8 @@ public interface UVMSConfigService {
 
     /**
      * Sends a ping message to the Config module.
-     * 
-     * @throws ConfigServiceException if unsuccessful 
+     *
+     * @throws ConfigServiceException if unsuccessful
      */
     public void sendPing() throws ConfigServiceException;
 

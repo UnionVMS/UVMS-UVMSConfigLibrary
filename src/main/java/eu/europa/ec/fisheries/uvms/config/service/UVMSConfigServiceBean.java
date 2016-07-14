@@ -1,20 +1,19 @@
 /*
-﻿Developed with the contribution of the European Commission - Directorate General for Maritime Affairs and Fisheries
-© European Union, 2015-2016.
+ ﻿Developed with the contribution of the European Commission - Directorate General for Maritime Affairs and Fisheries
+ © European Union, 2015-2016.
 
-This file is part of the Integrated Fisheries Data Management (IFDM) Suite. The IFDM Suite is free software: you can
-redistribute it and/or modify it under the terms of the GNU General Public License as published by the
-Free Software Foundation, either version 3 of the License, or any later version. The IFDM Suite is distributed in
-the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. You should have received a
-copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
+ This file is part of the Integrated Fisheries Data Management (IFDM) Suite. The IFDM Suite is free software: you can
+ redistribute it and/or modify it under the terms of the GNU General Public License as published by the
+ Free Software Foundation, either version 3 of the License, or any later version. The IFDM Suite is distributed in
+ the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details. You should have received a
+ copy of the GNU General Public License along with the IFDM Suite. If not, see <http://www.gnu.org/licenses/>.
  */
 package eu.europa.ec.fisheries.uvms.config.service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.jms.JMSException;
@@ -41,28 +40,32 @@ import eu.europa.ec.fisheries.uvms.config.model.exception.ModelMarshallException
 import eu.europa.ec.fisheries.uvms.config.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleResponseMapper;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 
-@Stateless
+@Singleton
+@Startup
 public class UVMSConfigServiceBean implements UVMSConfigService {
 
     final static Logger LOG = LoggerFactory.getLogger(UVMSConfigServiceBean.class);
 
-    @Inject
+    @EJB
     ParameterService parameterService;
-    
+
     @Inject
     @ConfigSettingUpdatedEvent
     Event<ConfigSettingEvent> settingUpdated;
-    
-    @Inject
+
+    @EJB
     ConfigHelper configHelper;
-    
-    @Inject
+
+    @EJB
     ConfigMessageProducer producer;
-    
-    @Inject
+
+    @EJB
     ConfigMessageConsumer consumer;
-    
+
     @Override
     public void syncSettingsWithConfig() throws ConfigServiceException {
 
@@ -74,40 +77,38 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
                     throw new ConfigMessageException("Failed to push missing settings to Config.");
                 }
             }
-        }
-        catch (ConfigMessageException | ModelMarshallException e) {
+        } catch (ConfigMessageException | ModelMarshallException e) {
             LOG.error("[ Error when synchronizing settings with Config module. ] {}", e.getMessage());
             throw new ConfigServiceException(e.getMessage());
         }
     }
 
-	@Override
-	public void updateSetting(SettingType setting, SettingEventType eventType) throws ConfigServiceException {
-		ConfigSettingEventType configSettingEventType = ConfigSettingEventType.UPDATE;
-		try {
-	    	if (eventType == SettingEventType.SET) {
-				parameterService.setStringValue(setting.getKey(), setting.getValue(), setting.getDescription());
-			}
-			else if (eventType == SettingEventType.RESET) {
-				configSettingEventType = ConfigSettingEventType.DELETE;
-				parameterService.reset(setting.getKey());
-			} else {
-				throw new ConfigServiceException("SettingEventType " + eventType + " not implemented");
-			}
-		}
-		catch (Exception e) {
-			LOG.error("[ Error when updating setting. ]", e.getMessage());
-			throw new ConfigServiceException(e.getMessage());
-		}
-		settingUpdated.fire(new ConfigSettingEvent(configSettingEventType, setting.getKey()));
-	}
+    @Override
+    public void updateSetting(SettingType setting, SettingEventType eventType) throws ConfigServiceException {
+        ConfigSettingEventType configSettingEventType = ConfigSettingEventType.UPDATE;
+        try {
+            if (eventType == SettingEventType.SET) {
+                parameterService.setStringValue(setting.getKey(), setting.getValue(), setting.getDescription());
+            } else if (eventType == SettingEventType.RESET) {
+                configSettingEventType = ConfigSettingEventType.DELETE;
+                parameterService.reset(setting.getKey());
+            } else {
+                throw new ConfigServiceException("SettingEventType " + eventType + " not implemented");
+            }
+        } catch (Exception e) {
+            LOG.error("[ Error when updating setting. ]", e.getMessage());
+            throw new ConfigServiceException(e.getMessage());
+        }
+        settingUpdated.fire(new ConfigSettingEvent(configSettingEventType, setting.getKey()));
+    }
 
     /**
-     * @return true if settings were pulled successful, or false if they are missing in the Config module
-     * @throws ModelMarshallException 
+     * @return true if settings were pulled successful, or false if they are
+     * missing in the Config module
+     * @throws ModelMarshallException
      * @throws ExchangeMessageException
      * @throws ExchangeModelMarshallException
-     * @throws ExchangeServiceException 
+     * @throws ExchangeServiceException
      */
     private boolean pullSettingsFromConfig() throws ModelMarshallException, ConfigMessageException, ConfigServiceException {
         String request = ModuleRequestMapper.toPullSettingsRequest(configHelper.getModuleName());
@@ -123,22 +124,22 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
     }
 
     @Override
-	public boolean pushSettingToConfig(SettingType setting, boolean remove) throws ConfigServiceException {
-    	try {
-    		String request = null;
-    		if(!remove) {
-    			request = ModuleRequestMapper.toSetSettingRequest(configHelper.getModuleName(), setting, "UVMS");
-    		} else {
-    			setting.setModule(configHelper.getModuleName());
-    			request = ModuleRequestMapper.toResetSettingRequest(setting);
-    		}
-    		String messageId = producer.sendConfigMessage(request);
-    		consumer.getConfigMessage(messageId, TextMessage.class);
-    		return true;
+    public boolean pushSettingToConfig(SettingType setting, boolean remove) throws ConfigServiceException {
+        try {
+            String request = null;
+            if (!remove) {
+                request = ModuleRequestMapper.toSetSettingRequest(configHelper.getModuleName(), setting, "UVMS");
+            } else {
+                setting.setModule(configHelper.getModuleName());
+                request = ModuleRequestMapper.toResetSettingRequest(setting);
+            }
+            String messageId = producer.sendConfigMessage(request);
+            consumer.getConfigMessage(messageId, TextMessage.class);
+            return true;
         } catch (ModelMarshallException | ConfigMessageException e) {
-        	return false;
+            return false;
         }
-	}
+    }
 
     @Override
     public List<SettingType> getSettings(String keyPrefix) throws ConfigServiceException {
@@ -152,8 +153,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
             }
 
             return settings;
-        }
-        catch (ConfigMessageException | ModelMapperException | JMSException e) {
+        } catch (ConfigMessageException | ModelMapperException | JMSException e) {
             LOG.error("[ Error when getting settings with key prefix. ] {}", e.getMessage());
             throw new ConfigServiceException("[ Error when getting settings with key prefix. ]");
         }
@@ -165,7 +165,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
      * @throws ExchangeModelMarshallException
      * @throws ExchangeMessageException
      * @throws ModelMarshallException
-     * @throws ConfigMessageException 
+     * @throws ConfigMessageException
      */
     private boolean pushSettingsToConfig() throws ConfigServiceException, ModelMarshallException, ConfigMessageException {
         String moduleName = configHelper.getModuleName();
@@ -186,11 +186,10 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
 
     private void storeSettings(List<SettingType> settings) throws ConfigServiceException {
         parameterService.clearAll();
-        for (SettingType setting: settings) {
+        for (SettingType setting : settings) {
             try {
                 parameterService.setStringValue(setting.getKey(), setting.getValue(), setting.getDescription());
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 LOG.error("[ Error when storing setting. ]", e);
             }
         }
@@ -201,8 +200,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
     public void sendPing() throws ConfigServiceException {
         try {
             producer.sendConfigMessage(ModuleRequestMapper.toPingRequest(configHelper.getModuleName()));
-        }
-        catch (ConfigMessageException | ModelMapperException e) {
+        } catch (ConfigMessageException | ModelMapperException e) {
             LOG.error("[ Error when sending ping to config. ] {}", e.getMessage());
             throw new ConfigServiceException(e.getMessage());
         }
