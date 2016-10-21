@@ -8,7 +8,7 @@
     <description>UnionVMS configuration management.</description>
 
     <properties>
-        <release.branch.name>uvms-2.0.6-kili</release.branch.name>
+        <release.branch.name>uvms-2.1.1-kili</release.branch.name>
         <javaee.version>7.0</javaee.version>
         <sl4j.version>1.7.7</sl4j.version>
 
