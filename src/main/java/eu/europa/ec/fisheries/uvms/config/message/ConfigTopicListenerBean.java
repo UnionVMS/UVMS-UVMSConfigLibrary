@@ -15,7 +15,6 @@ import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
@@ -32,6 +31,7 @@ import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
 import eu.europa.ec.fisheries.uvms.config.model.exception.ModelMarshallException;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.config.service.UVMSConfigService;
+import javax.ejb.EJB;
 
 //@formatter:off
 @MessageDriven(mappedName = ConfigConstants.CONFIG_STATUS_TOPIC, activationConfig = {
@@ -44,11 +44,11 @@ public class ConfigTopicListenerBean implements MessageListener {
 
     final static Logger LOG = LoggerFactory.getLogger(ConfigTopicListenerBean.class);
 
-    @Inject
+    @EJB
     UVMSConfigService configService;
 
-	@Inject
-	private ConfigHelper configHelper;
+    @EJB
+    ConfigHelper configHelper;
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -69,8 +69,7 @@ public class ConfigTopicListenerBean implements MessageListener {
 
             	break;
             }
-        }
-        catch (ConfigServiceException | ModelMarshallException e) {
+        } catch (ConfigServiceException | ModelMarshallException e) {
             LOG.error("[ Error when synchronizing settings with Config. ] {}", e.getMessage());
         }
     }
