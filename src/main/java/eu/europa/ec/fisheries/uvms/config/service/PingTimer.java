@@ -37,7 +37,7 @@ public class PingTimer {
         LOG.info("PingTimer init");
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         PingTask checkCommunicationTask = new PingTask(configService);
-        executor.scheduleWithFixedDelay(checkCommunicationTask, 1, 5, TimeUnit.MINUTES);
+        executor.scheduleWithFixedDelay(checkCommunicationTask, 5, 5, TimeUnit.MINUTES);
     }
 
 }

@@ -19,8 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
-import javax.ejb.DependsOn;
 import javax.ejb.EJB;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Singleton
 @Startup
@@ -33,10 +34,16 @@ public class ConfigInitializer {
 
     @PostConstruct
     protected void startup() {
-        try {
-            configService.syncSettingsWithConfig();
-        } catch (ConfigServiceException e) {
-            LOG.error("[ Error when synchronizing settings with Config at startup. ]");
-        }
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    configService.syncSettingsWithConfig();
+                } catch (ConfigServiceException e) {
+                    LOG.error("[ Error when synchronizing settings with Config at startup. ]");
+                }
+            }
+        });
     }
 }
