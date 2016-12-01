@@ -23,10 +23,11 @@ import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
 public interface UVMSConfigService {
 
     /**
-     *  Requests parameters from Config module and stores in the database.
-     *  If module is not registered, pushes current parameters to Config.
+     * Requests parameters from Config module and stores in the database. If
+     * module is not registered, pushes current parameters to Config.
      *  
-     *  @throws ExchangeServiceException if unsuccessful
+     * @throws
+     * eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException
      */
     public void syncSettingsWithConfig() throws ConfigServiceException;
 
@@ -41,9 +42,9 @@ public interface UVMSConfigService {
 
     /**
      * Push setting to config
-     * 
-     * @param fromModule
+     *
      * @param setting
+     * @param remove
      * @return
      * @throws ConfigServiceException
      */

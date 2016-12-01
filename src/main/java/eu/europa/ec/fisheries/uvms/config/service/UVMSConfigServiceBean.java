@@ -41,26 +41,29 @@ import eu.europa.ec.fisheries.uvms.config.model.exception.ModelMarshallException
 import eu.europa.ec.fisheries.uvms.config.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleResponseMapper;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 
-@Stateless
+@Singleton
 public class UVMSConfigServiceBean implements UVMSConfigService {
 
     final static Logger LOG = LoggerFactory.getLogger(UVMSConfigServiceBean.class);
 
-    @Inject
+    @EJB
     ParameterService parameterService;
     
     @Inject
     @ConfigSettingUpdatedEvent
     Event<ConfigSettingEvent> settingUpdated;
     
-    @Inject
+    @EJB
     ConfigHelper configHelper;
     
-    @Inject
+    @EJB
     ConfigMessageProducer producer;
     
-    @Inject
+    @EJB
     ConfigMessageConsumer consumer;
     
     @Override
@@ -74,8 +77,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
                     throw new ConfigMessageException("Failed to push missing settings to Config.");
                 }
             }
-        }
-        catch (ConfigMessageException | ModelMarshallException e) {
+        } catch (ConfigMessageException | ModelMarshallException e) {
             LOG.error("[ Error when synchronizing settings with Config module. ] {}", e.getMessage());
             throw new ConfigServiceException(e.getMessage());
         }
@@ -87,15 +89,13 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
 		try {
 	    	if (eventType == SettingEventType.SET) {
 				parameterService.setStringValue(setting.getKey(), setting.getValue(), setting.getDescription());
-			}
-			else if (eventType == SettingEventType.RESET) {
+            } else if (eventType == SettingEventType.RESET) {
 				configSettingEventType = ConfigSettingEventType.DELETE;
 				parameterService.reset(setting.getKey());
 			} else {
 				throw new ConfigServiceException("SettingEventType " + eventType + " not implemented");
 			}
-		}
-		catch (Exception e) {
+        } catch (Exception e) {
 			LOG.error("[ Error when updating setting. ]", e.getMessage());
 			throw new ConfigServiceException(e.getMessage());
 		}
@@ -103,7 +103,8 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
 	}
 
     /**
-     * @return true if settings were pulled successful, or false if they are missing in the Config module
+     * @return true if settings were pulled successful, or false if they are
+     * missing in the Config module
      * @throws ModelMarshallException 
      * @throws ExchangeMessageException
      * @throws ExchangeModelMarshallException
@@ -152,8 +153,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
             }
 
             return settings;
-        }
-        catch (ConfigMessageException | ModelMapperException | JMSException e) {
+        } catch (ConfigMessageException | ModelMapperException | JMSException e) {
             LOG.error("[ Error when getting settings with key prefix. ] {}", e.getMessage());
             throw new ConfigServiceException("[ Error when getting settings with key prefix. ]");
         }
@@ -189,8 +189,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
         for (SettingType setting: settings) {
             try {
                 parameterService.setStringValue(setting.getKey(), setting.getValue(), setting.getDescription());
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 LOG.error("[ Error when storing setting. ]", e);
             }
         }
@@ -201,8 +200,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
     public void sendPing() throws ConfigServiceException {
         try {
             producer.sendConfigMessage(ModuleRequestMapper.toPingRequest(configHelper.getModuleName()));
-        }
-        catch (ConfigMessageException | ModelMapperException e) {
+        } catch (ConfigMessageException | ModelMapperException e) {
             LOG.error("[ Error when sending ping to config. ] {}", e.getMessage());
             throw new ConfigServiceException(e.getMessage());
         }

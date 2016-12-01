@@ -14,7 +14,6 @@ package eu.europa.ec.fisheries.uvms.config.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -26,8 +25,9 @@ import eu.europa.ec.fisheries.schema.config.types.v1.SettingType;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
 import eu.europa.ec.fisheries.uvms.config.model.exception.InputArgumentException;
 import eu.europa.ec.fisheries.uvms.config.service.entity.Parameter;
+import javax.ejb.Singleton;
 
-@Stateless
+@Singleton
 public class ParameterServiceBean implements ParameterService {
 
     final static Logger LOG = LoggerFactory.getLogger(ParameterServiceBean.class);

@@ -12,18 +12,15 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package eu.europa.ec.fisheries.uvms.config.service;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.Schedule;
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.enterprise.concurrent.ManagedScheduledExecutorService;
-import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
-
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
@@ -32,17 +29,15 @@ public class PingTimer {
 
     final static Logger LOG = LoggerFactory.getLogger(PingTimer.class);
 
-    @Inject
+    @EJB
     UVMSConfigService configService;
-
-    @Resource(lookup="java:/uvmsConfigPingExecutorService")
-    private ManagedScheduledExecutorService executorService;
 
     @PostConstruct
     public void sendPing() {
         LOG.info("PingTimer init");
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         PingTask checkCommunicationTask = new PingTask(configService);
-        executorService.scheduleWithFixedDelay(checkCommunicationTask, 0, 5, TimeUnit.MINUTES);
+        executor.scheduleWithFixedDelay(checkCommunicationTask, 5, 5, TimeUnit.MINUTES);
     }
 
 }
