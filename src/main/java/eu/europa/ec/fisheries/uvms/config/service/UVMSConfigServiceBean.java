@@ -87,6 +87,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
 	public void updateSetting(SettingType setting, SettingEventType eventType) throws ConfigServiceException {
 		ConfigSettingEventType configSettingEventType = ConfigSettingEventType.UPDATE;
 		try {
+		    parameterService.init(setting.getModule());
 	    	if (eventType == SettingEventType.SET) {
 				parameterService.setStringValue(setting.getKey(), setting.getValue(), setting.getDescription());
             } else if (eventType == SettingEventType.RESET) {
