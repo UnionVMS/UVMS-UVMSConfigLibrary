@@ -34,8 +34,10 @@ public class ParameterServiceBean implements ParameterService {
     EntityManager em;
 
     public void init(String module) {
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory(module);
-        em = factory.createEntityManager();
+        if (em == null) {
+            EntityManagerFactory factory = Persistence.createEntityManagerFactory(module);
+            em = factory.createEntityManager();
+        }
     }
 
     @Override
