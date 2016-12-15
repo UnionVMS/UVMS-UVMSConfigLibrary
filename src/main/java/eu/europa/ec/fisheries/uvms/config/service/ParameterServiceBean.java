@@ -14,6 +14,8 @@ package eu.europa.ec.fisheries.uvms.config.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.naming.InitialContext;
 import javax.persistence.*;
 
@@ -113,6 +115,7 @@ public class ParameterServiceBean implements ParameterService {
 	}
     
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public boolean setStringValue(String key, String value, String description) throws ConfigServiceException {
         try {
             TypedQuery<Parameter> query = em.createNamedQuery(Parameter.FIND_BY_ID, Parameter.class);
