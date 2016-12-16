@@ -115,7 +115,6 @@ public class ParameterServiceBean implements ParameterService {
 	}
     
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public boolean setStringValue(String key, String value, String description) throws ConfigServiceException {
         try {
             TypedQuery<Parameter> query = em.createNamedQuery(Parameter.FIND_BY_ID, Parameter.class);
