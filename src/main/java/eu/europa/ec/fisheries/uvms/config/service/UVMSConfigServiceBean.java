@@ -14,6 +14,7 @@ package eu.europa.ec.fisheries.uvms.config.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -65,6 +66,11 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
     
     @EJB
     ConfigMessageConsumer consumer;
+
+    @PostConstruct
+    public void initializeParameterService() {
+        parameterService.init(configHelper.getModuleName());
+    }
     
     @Override
     public void syncSettingsWithConfig() throws ConfigServiceException {

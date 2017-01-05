@@ -21,6 +21,8 @@ import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
 @Local
 public interface ParameterService {
 
+    public void init(String module);
+
     /**
      * Returns the parameter value as a string.
      * 

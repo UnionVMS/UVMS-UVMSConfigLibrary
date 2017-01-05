@@ -14,9 +14,10 @@ package eu.europa.ec.fisheries.uvms.config.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.naming.InitialContext;
+import javax.persistence.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +33,14 @@ public class ParameterServiceBean implements ParameterService {
 
     final static Logger LOG = LoggerFactory.getLogger(ParameterServiceBean.class);
 
-    @PersistenceContext(unitName = "modulePU")
     EntityManager em;
+
+    public void init(String module) {
+        if (em == null) {
+            EntityManagerFactory factory = Persistence.createEntityManagerFactory(module);
+            em = factory.createEntityManager();
+        }
+    }
 
     @Override
     public String getStringValue(String key) throws ConfigServiceException {
