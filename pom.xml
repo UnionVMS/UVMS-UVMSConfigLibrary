@@ -8,7 +8,7 @@
     <description>UnionVMS configuration management.</description>
 
     <properties>
-        <release.branch.name>uvms-3.0.1-C3PO</release.branch.name>
+        <release.branch.name>uvms-3.0.3-C3PO</release.branch.name>
         <javaee.version>7.0</javaee.version>
         <sl4j.version>1.7.7</sl4j.version>
 
