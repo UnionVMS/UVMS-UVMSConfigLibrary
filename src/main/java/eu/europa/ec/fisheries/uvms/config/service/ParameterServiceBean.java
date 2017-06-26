@@ -42,6 +42,12 @@ public class ParameterServiceBean implements ParameterService {
         }
     }
 
+    public void init(EntityManager em) {
+        if(this.em == null) {
+            this.em = em;
+        }
+    }
+
     @Override
     public String getStringValue(String key) throws ConfigServiceException {
         try {
