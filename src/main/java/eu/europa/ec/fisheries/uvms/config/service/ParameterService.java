@@ -14,7 +14,7 @@ package eu.europa.ec.fisheries.uvms.config.service;
 import java.util.List;
 
 import javax.ejb.Local;
-
+import javax.persistence.*;
 import eu.europa.ec.fisheries.schema.config.types.v1.SettingType;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
 
