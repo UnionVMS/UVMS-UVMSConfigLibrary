@@ -23,6 +23,8 @@ public interface ParameterService {
 
     public void init(String module);
 
+    void init(EntityManager em);
+
     /**
      * Returns the parameter value as a string.
      * 
