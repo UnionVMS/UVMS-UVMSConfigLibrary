@@ -49,10 +49,10 @@ import javax.ejb.Startup;
 @Singleton
 public class UVMSConfigServiceBean implements UVMSConfigService {
 
-    final static Logger LOG = LoggerFactory.getLogger(UVMSConfigServiceBean.class);
+    private final static Logger LOG = LoggerFactory.getLogger(UVMSConfigServiceBean.class);
 
     @EJB
-    ParameterService parameterService;
+    private ParameterService parameterService;
     
     @Inject
     @ConfigSettingUpdatedEvent
@@ -67,11 +67,6 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
     @EJB
     ConfigMessageConsumer consumer;
 
-    @PostConstruct
-    public void initializeParameterService() {
-        parameterService.init(configHelper.getModuleName());
-    }
-    
     @Override
     public void syncSettingsWithConfig() throws ConfigServiceException {
 
@@ -112,9 +107,6 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
      * @return true if settings were pulled successful, or false if they are
      * missing in the Config module
      * @throws ModelMarshallException 
-     * @throws ExchangeMessageException
-     * @throws ExchangeModelMarshallException
-     * @throws ExchangeServiceException 
      */
     private boolean pullSettingsFromConfig() throws ModelMarshallException, ConfigMessageException, ConfigServiceException {
         String request = ModuleRequestMapper.toPullSettingsRequest(configHelper.getModuleName());
@@ -167,9 +159,6 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
 
     /**
      * @return true if settings were pushed successfully
-     * @throws ExchangeServiceException
-     * @throws ExchangeModelMarshallException
-     * @throws ExchangeMessageException
      * @throws ModelMarshallException
      * @throws ConfigMessageException 
      */

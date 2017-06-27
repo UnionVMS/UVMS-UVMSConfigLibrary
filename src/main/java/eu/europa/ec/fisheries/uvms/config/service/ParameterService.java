@@ -14,16 +14,11 @@ package eu.europa.ec.fisheries.uvms.config.service;
 import java.util.List;
 
 import javax.ejb.Local;
-import javax.persistence.*;
 import eu.europa.ec.fisheries.schema.config.types.v1.SettingType;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
 
 @Local
 public interface ParameterService {
-
-    public void init(String module);
-
-    void init(EntityManager em);
 
     /**
      * Returns the parameter value as a string.
@@ -32,7 +27,7 @@ public interface ParameterService {
      * @return a string representation of the parameter value
      * @throws ConfigServiceException if unsuccessful
      */
-    public String getStringValue(String key) throws ConfigServiceException;
+    String getStringValue(String key) throws ConfigServiceException;
 
     /**
      * Remove the parameter by key
@@ -40,21 +35,21 @@ public interface ParameterService {
      * @return true if able to remove, false otherwise
      * @throws ConfigServiceException
      */
-    public boolean removeParameter(String key) throws ConfigServiceException;
+    boolean removeParameter(String key) throws ConfigServiceException;
     
     /**
      * @param keys a list of parameter keys
      * @return a list of all settings matching one of the keys
      * @throws ConfigServiceException if unsuccessful
      */
-    public List<SettingType> getSettings(List<String> keys) throws ConfigServiceException;
+    List<SettingType> getSettings(List<String> keys) throws ConfigServiceException;
 
     /**
      * Get all settings in parameter table
      * @return
      * @throws ConfigServiceException
      */
-    public List<SettingType> getAllSettings() throws ConfigServiceException;
+    List<SettingType> getAllSettings() throws ConfigServiceException;
     
     /**
      * Sets a value for the specified key.
@@ -64,7 +59,7 @@ public interface ParameterService {
      * @param description a description of the parameter
      * @throws ConfigServiceException if unsuccessful
      */
-    public boolean setStringValue(String key, String value, String description) throws ConfigServiceException;
+    boolean setStringValue(String key, String value, String description) throws ConfigServiceException;
 
     /**
      * Returns the parameter value as a boolean.
@@ -74,7 +69,7 @@ public interface ParameterService {
      * @return a boolean representation of the parameter value
      * @throws ConfigServiceException if parameter is neither "true" nor "false"
      */
-    public Boolean getBooleanValue(String key) throws ConfigServiceException;
+    Boolean getBooleanValue(String key) throws ConfigServiceException;
 
     /**
      * Removes any parameter with the specified key.
@@ -82,12 +77,12 @@ public interface ParameterService {
      * @param key a parameter key 
      * @throws ConfigServiceException if unsuccessful
      */
-    public void reset(String key) throws ConfigServiceException;
+    void reset(String key) throws ConfigServiceException;
 
     /**
      * Removes all parameters.
      * 
      * @throws ConfigServiceException if unsuccessful
      */
-    public void clearAll() throws ConfigServiceException;
+    void clearAll() throws ConfigServiceException;
 }
