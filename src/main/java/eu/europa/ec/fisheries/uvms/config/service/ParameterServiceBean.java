@@ -40,8 +40,8 @@ public class ParameterServiceBean implements ParameterService {
             query.setParameter("id", key);
             return query.getSingleResult().getParamValue();
         }
-        catch (Exception e) {
-            LOG.error("[ Error when getting String value ] {}", e.getMessage());
+        catch (RuntimeException e) {
+            LOG.error("[ Error when getting String value ] {}", e);
             throw new ConfigServiceException("[ Error when getting String value. ]");
         }
     }
@@ -55,8 +55,8 @@ public class ParameterServiceBean implements ParameterService {
     		em.remove(parameter);
     		em.flush();
     		return true;
-    	} catch (Exception e) {
-    		LOG.error("[ Error when remove parameter " + key + " ]");
+    	} catch (RuntimeException e) {
+    		LOG.error("[ Error when remove parameter " + key + " ]", e);
     		throw new ConfigServiceException("[ Error when remove parameter " + key + " ]");
     	}
 	}
@@ -77,8 +77,8 @@ public class ParameterServiceBean implements ParameterService {
 
             return settings;
         }
-        catch (Exception e) {
-            LOG.error("[ Error when getting settings by IDs. ] {}", e.getMessage());
+        catch (RuntimeException e) {
+            LOG.error("[ Error when getting settings by IDs. ] {}", e);
             throw new ConfigServiceException("[ Error when getting settings by IDs. ]");
         }
     }
@@ -99,8 +99,8 @@ public class ParameterServiceBean implements ParameterService {
 
             return settings;
         }
-        catch (Exception e) {
-            LOG.error("[ Error when getting all settings. ] {}", e.getMessage());
+        catch (RuntimeException e) {
+            LOG.error("[ Error when getting all settings. ] {}", e);
             throw new ConfigServiceException("[ Error when getting all settings. ]");
         }
 	}
@@ -134,8 +134,8 @@ public class ParameterServiceBean implements ParameterService {
             }
             return true;
         }
-        catch (Exception e) {
-            LOG.error("[ Error when setting String value. ] {}={}, {}, {}", key, value, description, e.getMessage());
+        catch (RuntimeException e) {
+            LOG.error("[ Error when setting String value. ] {}={}, {}", key, value, description, e);
             throw new ConfigServiceException("[ Error when setting String value. ]");
         }
     }
@@ -146,7 +146,7 @@ public class ParameterServiceBean implements ParameterService {
             return parseBooleanValue(getStringValue(key));
         }
         catch (Exception e) {
-            LOG.error("[ Error when getting Boolean value. ]", e.getMessage());
+            LOG.error("[ Error when getting Boolean value. ]", e);
             throw new ConfigServiceException("[ Error when getting Boolean value. ]");
         }
     }
@@ -160,16 +160,17 @@ public class ParameterServiceBean implements ParameterService {
             parameters = query.getResultList();
     	}
     	catch (Exception e) {
-    		LOG.error("[ Error when removing parameters. ]", e.getMessage());
+    		LOG.error("[ Error when removing parameters. ]", e);
     		throw new ConfigServiceException(e.getMessage());
     	}
 
+    	//TODO: No, fix this!
 		for (Parameter parameter : parameters) {
 	        try {
 	        	em.remove(parameter);
 	        }
         	catch (Exception e) {
-        		LOG.error("[ Error when removing parameter. ]", e.getMessage());
+        		LOG.error("[ Error when removing parameter. ]", e);
         	}
     	}
     }
@@ -182,7 +183,7 @@ public class ParameterServiceBean implements ParameterService {
             parameters = query.getResultList();
         }
         catch (Exception e) {
-            LOG.error("[ Error when clearing all settings. ] {}", e.getMessage());
+            LOG.error("[ Error when clearing all settings. ] ", e);
             throw new ConfigServiceException("[ Error when clearing all settings. ]");
         }
     	
@@ -191,7 +192,7 @@ public class ParameterServiceBean implements ParameterService {
                 em.remove(parameter);
         	}
         	catch (Exception e) {
-        		LOG.error("[ Error when removing parameter. ]", e.getMessage());
+        		LOG.error("[ Error when removing parameter. ]", e);
         	}
         }
     }
