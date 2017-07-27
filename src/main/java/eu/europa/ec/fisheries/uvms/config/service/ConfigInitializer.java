@@ -12,6 +12,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package eu.europa.ec.fisheries.uvms.config.service;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
@@ -19,31 +20,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
-import javax.ejb.EJB;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Singleton
 @Startup
 public class ConfigInitializer {
 
-    @EJB
-    UVMSConfigService configService;
+	@EJB
+	UVMSConfigService configService;
 
-    final static Logger LOG = LoggerFactory.getLogger(ConfigInitializer.class);
+	final static Logger LOG = LoggerFactory.getLogger(ConfigInitializer.class);
 
-    @PostConstruct
-    protected void startup() {
-        ExecutorService executor = Executors.newFixedThreadPool(1);
-        executor.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    configService.syncSettingsWithConfig();
-                } catch (ConfigServiceException e) {
-                    LOG.error("[ Error when synchronizing settings with Config at startup. ]");
-                }
-            }
-        });
-    }
+	@PostConstruct
+	protected void startup() {
+		try {
+			configService.syncSettingsWithConfig();
+		} catch (ConfigServiceException e) {
+			LOG.error("[ Error when synchronizing settings with Config at startup. ]");
+		}
+	}
 }
