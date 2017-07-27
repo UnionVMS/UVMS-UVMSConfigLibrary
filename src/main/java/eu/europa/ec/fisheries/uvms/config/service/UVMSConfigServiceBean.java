@@ -47,6 +47,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
 @Singleton
+@Startup
 public class UVMSConfigServiceBean implements UVMSConfigService {
 
     final static Logger LOG = LoggerFactory.getLogger(UVMSConfigServiceBean.class);
