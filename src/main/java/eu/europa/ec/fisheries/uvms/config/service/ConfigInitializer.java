@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
 
 @Singleton
-@Startup
 public class ConfigInitializer {
 
 	@EJB

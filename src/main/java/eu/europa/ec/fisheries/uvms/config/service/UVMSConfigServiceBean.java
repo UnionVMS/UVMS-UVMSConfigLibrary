@@ -47,7 +47,6 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
 @Singleton
-@Startup
 public class UVMSConfigServiceBean implements UVMSConfigService {
 
     final static Logger LOG = LoggerFactory.getLogger(UVMSConfigServiceBean.class);
@@ -67,15 +66,21 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
     
     @EJB
     ConfigMessageConsumer consumer;
+    
+    private boolean initialised=false;
 
     @PostConstruct
     public void initializeParameterService() {
         parameterService.init(configHelper.getModuleName());
+        initialised=true;
     }
     
     @Override
     public void syncSettingsWithConfig() throws ConfigServiceException {
-
+    	if (!initialised) {
+    		initializeParameterService();
+    	}
+    	
         try {
             boolean pullSuccess = pullSettingsFromConfig();
             if (!pullSuccess) {
