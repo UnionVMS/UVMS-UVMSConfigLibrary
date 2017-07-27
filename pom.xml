@@ -15,7 +15,7 @@
     </parent>
     <properties>
         <javaee.version>7.0</javaee.version>
-        <sl4j.version>1.7.25</sl4j.version>
+        <sl4j.version>1.7.7</sl4j.version>
 		<config.model.version>2.1.1</config.model.version>
         <project.scm.id>github</project.scm.id>
     </properties>
