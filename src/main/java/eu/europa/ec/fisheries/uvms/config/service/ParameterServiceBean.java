@@ -20,9 +20,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.europa.ec.fisheries.schema.config.types.v1.SettingType;
+import eu.europa.ec.fisheries.uvms.config.constants.ConfigHelper;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
 import eu.europa.ec.fisheries.uvms.config.model.exception.InputArgumentException;
 import eu.europa.ec.fisheries.uvms.config.service.entity.Parameter;
+
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 
 @Singleton
@@ -30,13 +33,13 @@ public class ParameterServiceBean implements ParameterService {
 
     final static Logger LOG = LoggerFactory.getLogger(ParameterServiceBean.class);
 
-    @PersistenceContext
-    private EntityManager em;
+    @EJB
+    private ConfigHelper configHelper;
 
     @Override
     public String getStringValue(String key) throws ConfigServiceException {
         try {
-            TypedQuery<Parameter> query = em.createNamedQuery(Parameter.FIND_BY_ID, Parameter.class);
+            TypedQuery<Parameter> query = configHelper.getEntityManager().createNamedQuery(Parameter.FIND_BY_ID, Parameter.class);
             query.setParameter("id", key);
             return query.getSingleResult().getParamValue();
         }
@@ -49,11 +52,11 @@ public class ParameterServiceBean implements ParameterService {
     @Override
 	public boolean removeParameter(String key) throws ConfigServiceException {
     	try {
-    		TypedQuery<Parameter> query = em.createNamedQuery(Parameter.FIND_BY_ID, Parameter.class);
+    		TypedQuery<Parameter> query = configHelper.getEntityManager().createNamedQuery(Parameter.FIND_BY_ID, Parameter.class);
     		query.setParameter("id", key);
     		Parameter parameter = query.getSingleResult();
-    		em.remove(parameter);
-    		em.flush();
+    		configHelper.getEntityManager().remove(parameter);
+    		configHelper.getEntityManager().flush();
     		return true;
     	} catch (RuntimeException e) {
     		LOG.error("[ Error when remove parameter " + key + " ]", e);
@@ -63,7 +66,7 @@ public class ParameterServiceBean implements ParameterService {
     
     public List<SettingType> getSettings(List<String> keys) throws ConfigServiceException {
         try {
-            TypedQuery<Parameter> query = em.createNamedQuery(Parameter.LIST_ALL_BY_IDS, Parameter.class);
+            TypedQuery<Parameter> query = configHelper.getEntityManager().createNamedQuery(Parameter.LIST_ALL_BY_IDS, Parameter.class);
             query.setParameter("ids", keys);
 
             List<SettingType> settings = new ArrayList<>();
@@ -86,7 +89,7 @@ public class ParameterServiceBean implements ParameterService {
     @Override
 	public List<SettingType> getAllSettings() throws ConfigServiceException {
         try {
-            TypedQuery<Parameter> query = em.createNamedQuery(Parameter.LIST_ALL, Parameter.class);
+            TypedQuery<Parameter> query = configHelper.getEntityManager().createNamedQuery(Parameter.LIST_ALL, Parameter.class);
 
             List<SettingType> settings = new ArrayList<>();
             for (Parameter parameter : query.getResultList()) {
@@ -108,20 +111,20 @@ public class ParameterServiceBean implements ParameterService {
     @Override
     public boolean setStringValue(String key, String value, String description) throws ConfigServiceException {
         try {
-            TypedQuery<Parameter> query = em.createNamedQuery(Parameter.FIND_BY_ID, Parameter.class);
+            TypedQuery<Parameter> query = configHelper.getEntityManager().createNamedQuery(Parameter.FIND_BY_ID, Parameter.class);
             query.setParameter("id", key);
             List<Parameter> parameters = query.getResultList();
 
             if (parameters.size() == 1) {
                 // Update existing parameter
                 parameters.get(0).setParamValue(value);
-                em.flush();
+                configHelper.getEntityManager().flush();
             }
             else {
                 if (!parameters.isEmpty()) {
                     // Remove all parameters occurring more than once
                     for (Parameter parameter : parameters) {
-                        em.remove(parameter);
+                        configHelper.getEntityManager().remove(parameter);
                     }
                 }
 
@@ -130,7 +133,7 @@ public class ParameterServiceBean implements ParameterService {
                 parameter.setParamId(key);
                 parameter.setParamDescription(description != null ? description : "-");
 				parameter.setParamValue(value);
-                em.persist(parameter);
+                configHelper.getEntityManager().persist(parameter);
             }
             return true;
         }
@@ -155,7 +158,7 @@ public class ParameterServiceBean implements ParameterService {
     public void reset(String key) throws ConfigServiceException {
     	List<Parameter> parameters;
     	try {
-        	TypedQuery<Parameter> query = em.createNamedQuery(Parameter.FIND_BY_ID, Parameter.class);
+        	TypedQuery<Parameter> query = configHelper.getEntityManager().createNamedQuery(Parameter.FIND_BY_ID, Parameter.class);
             query.setParameter("id", key);
             parameters = query.getResultList();
     	}
@@ -167,7 +170,7 @@ public class ParameterServiceBean implements ParameterService {
     	//TODO: No, fix this!
 		for (Parameter parameter : parameters) {
 	        try {
-	        	em.remove(parameter);
+	        	configHelper.getEntityManager().remove(parameter);
 	        }
         	catch (Exception e) {
         		LOG.error("[ Error when removing parameter. ]", e);
@@ -179,7 +182,7 @@ public class ParameterServiceBean implements ParameterService {
     public void clearAll() throws ConfigServiceException {
     	List<Parameter> parameters;
     	try {
-            TypedQuery<Parameter> query = em.createNamedQuery(Parameter.LIST_ALL, Parameter.class);
+            TypedQuery<Parameter> query = configHelper.getEntityManager().createNamedQuery(Parameter.LIST_ALL, Parameter.class);
             parameters = query.getResultList();
         }
         catch (Exception e) {
@@ -189,7 +192,7 @@ public class ParameterServiceBean implements ParameterService {
     	
         for (Parameter parameter : parameters) {
         	try {
-                em.remove(parameter);
+                configHelper.getEntityManager().remove(parameter);
         	}
         	catch (Exception e) {
         		LOG.error("[ Error when removing parameter. ]", e);

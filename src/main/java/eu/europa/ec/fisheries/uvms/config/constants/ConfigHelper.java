@@ -14,6 +14,7 @@ package eu.europa.ec.fisheries.uvms.config.constants;
 import java.util.List;
 
 import javax.ejb.Local;
+import javax.persistence.EntityManager;
 
 @Local
 public interface ConfigHelper {
@@ -21,5 +22,7 @@ public interface ConfigHelper {
 	List<String> getAllParameterKeys();
 
 	String getModuleName();	
+	
+	EntityManager getEntityManager();
 
 }
