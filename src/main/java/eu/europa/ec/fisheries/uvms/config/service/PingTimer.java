@@ -12,6 +12,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package eu.europa.ec.fisheries.uvms.config.service;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.DependsOn;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -25,12 +26,13 @@ import java.util.concurrent.TimeUnit;
 
 @Singleton
 @Startup
+@DependsOn("UVMSConfigServiceBean")
 public class PingTimer {
 
     final static Logger LOG = LoggerFactory.getLogger(PingTimer.class);
 
     @EJB
-    UVMSConfigService configService;
+    private UVMSConfigService configService;
 
     @PostConstruct
     public void sendPing() {

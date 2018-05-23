@@ -19,14 +19,18 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
+import static eu.europa.ec.fisheries.uvms.config.service.entity.Parameter.FIND_BY_ID;
+import static eu.europa.ec.fisheries.uvms.config.service.entity.Parameter.LIST_ALL;
+import static eu.europa.ec.fisheries.uvms.config.service.entity.Parameter.LIST_ALL_BY_IDS;
+
 /**
  * The persistent class for the parameter database table.
  */
 @Entity
 @NamedQueries({
-    @NamedQuery(name = Parameter.FIND_BY_ID, query = "SELECT p FROM Parameter p WHERE p.id = :id"),
-    @NamedQuery(name = Parameter.LIST_ALL_BY_IDS, query = "SELECT p FROM Parameter p WHERE p.id IN :ids"),
-    @NamedQuery(name = Parameter.LIST_ALL, query = "SELECT p FROM Parameter p")
+    @NamedQuery(name = FIND_BY_ID, query = "SELECT p FROM Parameter p WHERE p.id = :id"),
+    @NamedQuery(name = LIST_ALL_BY_IDS, query = "SELECT p FROM Parameter p WHERE p.id IN :ids"),
+    @NamedQuery(name = LIST_ALL, query = "SELECT p FROM Parameter p")
 })
 public class Parameter implements Serializable {
 

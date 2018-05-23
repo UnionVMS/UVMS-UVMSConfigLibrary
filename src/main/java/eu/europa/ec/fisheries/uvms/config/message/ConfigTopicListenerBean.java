@@ -45,10 +45,10 @@ public class ConfigTopicListenerBean implements MessageListener {
     final static Logger LOG = LoggerFactory.getLogger(ConfigTopicListenerBean.class);
 
     @EJB
-    UVMSConfigService configService;
+    private UVMSConfigService configService;
 
     @EJB
-    ConfigHelper configHelper;
+    private ConfigHelper configHelper;
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

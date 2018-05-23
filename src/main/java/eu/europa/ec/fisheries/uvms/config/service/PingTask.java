@@ -18,9 +18,9 @@ import org.slf4j.LoggerFactory;
 public class PingTask implements Runnable {
     final static Logger LOG = LoggerFactory.getLogger(PingTask.class);
 
-    UVMSConfigService configService;
+    private UVMSConfigService configService;
 
-    public PingTask(UVMSConfigService configService) {
+    PingTask(UVMSConfigService configService) {
         this.configService = configService;
     }
 

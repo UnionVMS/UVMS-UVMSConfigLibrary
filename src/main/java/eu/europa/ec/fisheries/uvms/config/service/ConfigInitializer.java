@@ -12,6 +12,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package eu.europa.ec.fisheries.uvms.config.service;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
@@ -25,12 +26,13 @@ import java.util.concurrent.Executors;
 
 @Singleton
 @Startup
+@DependsOn("UVMSConfigServiceBean")
 public class ConfigInitializer {
 
-    @EJB
-    UVMSConfigService configService;
-
     final static Logger LOG = LoggerFactory.getLogger(ConfigInitializer.class);
+
+    @EJB
+    private UVMSConfigService configService;
 
     @PostConstruct
     protected void startup() {

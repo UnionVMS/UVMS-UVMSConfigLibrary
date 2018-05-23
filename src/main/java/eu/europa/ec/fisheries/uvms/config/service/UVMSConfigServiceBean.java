@@ -14,8 +14,7 @@ package eu.europa.ec.fisheries.uvms.config.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
+import javax.ejb.DependsOn;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.jms.JMSException;
@@ -44,9 +43,9 @@ import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleResponseMapper;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
-import javax.ejb.Startup;
 
 @Singleton
+@DependsOn("ParameterServiceBean")
 public class UVMSConfigServiceBean implements UVMSConfigService {
 
     private final static Logger LOG = LoggerFactory.getLogger(UVMSConfigServiceBean.class);
@@ -56,16 +55,16 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
     
     @Inject
     @ConfigSettingUpdatedEvent
-    Event<ConfigSettingEvent> settingUpdated;
+    private Event<ConfigSettingEvent> settingUpdated;
     
     @EJB
-    ConfigHelper configHelper;
+    private ConfigHelper configHelper;
     
     @EJB
-    ConfigMessageProducer producer;
+    private ConfigMessageProducer producer;
     
     @EJB
-    ConfigMessageConsumer consumer;
+    private ConfigMessageConsumer consumer;
 
     @Override
     public void syncSettingsWithConfig() throws ConfigServiceException {
@@ -110,29 +109,26 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
      */
     private boolean pullSettingsFromConfig() throws ModelMarshallException, ConfigMessageException, ConfigServiceException {
         String request = ModuleRequestMapper.toPullSettingsRequest(configHelper.getModuleName());
-        String messageId = producer.sendConfigMessage(request);
-        TextMessage response = consumer.getConfigMessage(messageId, TextMessage.class);
+        TextMessage response = sendSyncronousMsgWithResponseToConfig(request);
         PullSettingsResponse pullResponse = JAXBMarshaller.unmarshallTextMessage(response, PullSettingsResponse.class);
         if (pullResponse.getStatus() == PullSettingsStatus.MISSING) {
             return false;
         }
-
         storeSettings(pullResponse.getSettings());
         return true;
     }
 
     @Override
-	public boolean pushSettingToConfig(SettingType setting, boolean remove) throws ConfigServiceException {
+	public boolean pushSettingToConfig(SettingType setting, boolean remove) {
     	try {
-    		String request = null;
+    		String request;
     		if(!remove) {
     			request = ModuleRequestMapper.toSetSettingRequest(configHelper.getModuleName(), setting, "UVMS");
     		} else {
     			setting.setModule(configHelper.getModuleName());
     			request = ModuleRequestMapper.toResetSettingRequest(setting);
     		}
-    		String messageId = producer.sendConfigMessage(request);
-    		consumer.getConfigMessage(messageId, TextMessage.class);
+    		sendSyncronousMsgWithResponseToConfig(request);
     		return true;
         } catch (ModelMarshallException | ConfigMessageException e) {
         	return false;
@@ -143,18 +139,21 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
     public List<SettingType> getSettings(String keyPrefix) throws ConfigServiceException {
         try {
             String request = ModuleRequestMapper.toListSettingsRequest(configHelper.getModuleName());
-            String messageId = producer.sendConfigMessage(request);
-            TextMessage response = consumer.getConfigMessage(messageId, TextMessage.class);
+            TextMessage response = sendSyncronousMsgWithResponseToConfig(request);
             List<SettingType> settings = ModuleResponseMapper.getSettingsFromSettingsListResponse(response);
             if (keyPrefix != null) {
                 settings = getSettingsWithKeyPrefix(settings, keyPrefix);
             }
-
             return settings;
         } catch (ConfigMessageException | ModelMapperException | JMSException e) {
             LOG.error("[ Error when getting settings with key prefix. ] {}", e.getMessage());
             throw new ConfigServiceException("[ Error when getting settings with key prefix. ]");
         }
+    }
+
+    private TextMessage sendSyncronousMsgWithResponseToConfig(String request) throws ConfigMessageException {
+        String messageId = producer.sendConfigMessage(request);
+        return consumer.getConfigMessage(messageId, TextMessage.class);
     }
 
     /**
@@ -165,16 +164,12 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
     private boolean pushSettingsToConfig() throws ConfigServiceException, ModelMarshallException, ConfigMessageException {
         String moduleName = configHelper.getModuleName();
         List<SettingType> moduleSettings = parameterService.getSettings(configHelper.getAllParameterKeys());
-
         String request = ModuleRequestMapper.toPushSettingsRequest(moduleName, moduleSettings, "UVMS");
-        String messageId = producer.sendConfigMessage(request);
-        TextMessage response = consumer.getConfigMessage(messageId, TextMessage.class);
+        TextMessage response = sendSyncronousMsgWithResponseToConfig(request);
         PushSettingsResponse pushResponse = JAXBMarshaller.unmarshallTextMessage(response, PushSettingsResponse.class);
-
         if (pushResponse.getStatus() != PullSettingsStatus.OK) {
             return false;
         }
-
         storeSettings(pushResponse.getSettings());
         return true;
     }
@@ -208,7 +203,6 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
                 filteredSettings.add(setting);
             }
         }
-
         return filteredSettings;
     }
 

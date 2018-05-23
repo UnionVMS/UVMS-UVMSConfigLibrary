@@ -18,6 +18,6 @@ import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
 @Local
 public interface ConfigMessageConsumer {
 
-    public <T> T getConfigMessage(String correlationId, Class type) throws ConfigMessageException;
+    <T> T getConfigMessage(String correlationId, Class type) throws ConfigMessageException;
 
 }
