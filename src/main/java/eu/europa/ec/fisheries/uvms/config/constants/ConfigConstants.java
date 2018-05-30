@@ -16,7 +16,6 @@ public class ConfigConstants {
     public static final String CONNECTION_TYPE_MESSAGE_LISTENER = "javax.jms.MessageListener";
     public static final String DESTINATION_TYPE_TOPIC = "javax.jms.Topic";
 
-    public static final String CONFIG_MESSAGE_IN_QUEUE = "jms/queue/UVMSConfigEvent";
     public static final String CONFIG_STATUS_TOPIC = "jms/topic/ConfigStatus";
     public static final String CONFIG_STATUS_TOPIC_NAME = "ConfigStatus";
 

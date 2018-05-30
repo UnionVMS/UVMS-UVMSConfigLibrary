@@ -29,7 +29,7 @@ public interface UVMSConfigService {
      * @throws
      * eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException
      */
-    public void syncSettingsWithConfig() throws ConfigServiceException;
+    void syncSettingsWithConfig() throws ConfigServiceException;
 
     /**
      * Updates a setting by setting a value or removing it.
@@ -38,7 +38,7 @@ public interface UVMSConfigService {
      * @param eventType an event type
      * @throws ConfigServiceException if unsuccessful
      */
-    public void updateSetting(SettingType setting, SettingEventType eventType) throws ConfigServiceException;
+    void updateSetting(SettingType setting, SettingEventType eventType) throws ConfigServiceException;
 
     /**
      * Push setting to config
@@ -48,20 +48,20 @@ public interface UVMSConfigService {
      * @return
      * @throws ConfigServiceException
      */
-    public boolean pushSettingToConfig(SettingType setting, boolean remove) throws ConfigServiceException;
+    boolean pushSettingToConfig(SettingType setting, boolean remove) throws ConfigServiceException;
 
     /**
      * @param keyPrefix a prefix
      * @return list of settings for this module, filtered by key prefix
      * @throws ConfigServiceException if unsuccessful
      */
-    public List<SettingType> getSettings(String keyPrefix) throws ConfigServiceException;
+    List<SettingType> getSettings(String keyPrefix) throws ConfigServiceException;
 
     /**
      * Sends a ping message to the Config module.
      * 
      * @throws ConfigServiceException if unsuccessful 
      */
-    public void sendPing() throws ConfigServiceException;
+    void sendPing() throws ConfigServiceException;
 
 }
