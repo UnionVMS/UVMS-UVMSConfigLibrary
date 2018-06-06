@@ -3,7 +3,7 @@
     <groupId>eu.europa.ec.fisheries.uvms</groupId>
     <artifactId>uvms-config</artifactId>
     <packaging>jar</packaging>
-    <version>4.0.1-SNAPSHOT</version>
+    <version>4.0.1</version>
     <name>uvms-config</name>
     <description>UnionVMS configuration management.</description>
 
@@ -50,7 +50,7 @@
 
     <scm>
       <connection>scm:git:https://github.com/UnionVMS/UVMS-UVMSConfigLibrary.git</connection>
-      <tag>HEAD</tag>
+      <tag>uvms-config-4.0.1</tag>
   </scm>
 
     <dependencies>
