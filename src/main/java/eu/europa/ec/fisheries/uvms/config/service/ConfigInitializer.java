@@ -29,7 +29,7 @@ import java.util.concurrent.Executors;
 @DependsOn("UVMSConfigServiceBean")
 public class ConfigInitializer {
 
-    final static Logger LOG = LoggerFactory.getLogger(ConfigInitializer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigInitializer.class);
 
     @EJB
     private UVMSConfigService configService;

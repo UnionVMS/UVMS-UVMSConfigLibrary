@@ -51,7 +51,6 @@ public class ConfigTopicListenerBean implements MessageListener {
     private ConfigHelper configHelper;
 
 	@Override
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void onMessage(Message message) {
 		TextMessage textMessage = (TextMessage) message;
         try {
