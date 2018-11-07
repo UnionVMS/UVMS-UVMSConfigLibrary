@@ -11,18 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.config.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ejb.DependsOn;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import eu.europa.ec.fisheries.schema.config.module.v1.PullSettingsResponse;
 import eu.europa.ec.fisheries.schema.config.module.v1.PushSettingsResponse;
 import eu.europa.ec.fisheries.schema.config.module.v1.SettingEventType;
@@ -41,8 +29,18 @@ import eu.europa.ec.fisheries.uvms.config.model.exception.ModelMarshallException
 import eu.europa.ec.fisheries.uvms.config.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleResponseMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ejb.DependsOn;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import java.util.ArrayList;
+import java.util.List;
 
 @Singleton
 @DependsOn("ParameterServiceBean")
@@ -53,10 +51,6 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
     @EJB
     private ParameterService parameterService;
     
-    @Inject
-    @ConfigSettingUpdatedEvent
-    private Event<ConfigSettingEvent> settingUpdated;
-    
     @EJB
     private ConfigHelper configHelper;
     
@@ -65,6 +59,10 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
     
     @EJB
     private ConfigMessageConsumer consumer;
+
+    @Inject
+    @ConfigSettingUpdatedEvent
+    private Event<ConfigSettingEvent> settingUpdated;
 
     @Override
     public void syncSettingsWithConfig() throws ConfigServiceException {

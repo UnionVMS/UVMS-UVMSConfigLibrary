@@ -11,15 +11,14 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.config.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.DependsOn;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -29,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 @DependsOn("UVMSConfigServiceBean")
 public class PingTimer {
 
-    final static Logger LOG = LoggerFactory.getLogger(PingTimer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PingTimer.class);
 
     @EJB
     private UVMSConfigService configService;

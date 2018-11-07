@@ -11,27 +11,24 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.config.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import eu.europa.ec.fisheries.schema.config.types.v1.SettingType;
 import eu.europa.ec.fisheries.uvms.config.constants.ConfigHelper;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
 import eu.europa.ec.fisheries.uvms.config.model.exception.InputArgumentException;
 import eu.europa.ec.fisheries.uvms.config.service.entity.Parameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
+import javax.persistence.TypedQuery;
+import java.util.ArrayList;
+import java.util.List;
 
 @Singleton
 public class ParameterServiceBean implements ParameterService {
 
-    final static Logger LOG = LoggerFactory.getLogger(ParameterServiceBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ParameterServiceBean.class);
 
     @EJB
     private ConfigHelper configHelper;
@@ -90,7 +87,6 @@ public class ParameterServiceBean implements ParameterService {
 	public List<SettingType> getAllSettings() throws ConfigServiceException {
         try {
             TypedQuery<Parameter> query = configHelper.getEntityManager().createNamedQuery(Parameter.LIST_ALL, Parameter.class);
-
             List<SettingType> settings = new ArrayList<>();
             for (Parameter parameter : query.getResultList()) {
                 SettingType setting = new SettingType();
@@ -99,7 +95,6 @@ public class ParameterServiceBean implements ParameterService {
                 setting.setDescription(parameter.getParamDescription());
                 settings.add(setting);
             }
-
             return settings;
         }
         catch (RuntimeException e) {
@@ -127,7 +122,6 @@ public class ParameterServiceBean implements ParameterService {
                         configHelper.getEntityManager().remove(parameter);
                     }
                 }
-
                 // Create new parameter
                 Parameter parameter = new Parameter();
                 parameter.setParamId(key);
@@ -166,7 +160,6 @@ public class ParameterServiceBean implements ParameterService {
     		LOG.error("[ Error when removing parameters. ]", e);
     		throw new ConfigServiceException(e.getMessage());
     	}
-
     	//TODO: No, fix this!
 		for (Parameter parameter : parameters) {
 	        try {
