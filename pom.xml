@@ -3,7 +3,7 @@
     <groupId>eu.europa.ec.fisheries.uvms</groupId>
     <artifactId>config-library</artifactId>
     <packaging>jar</packaging>
-    <version>4.0.2-W14-J8</version>
+    <version>4.0.3-SNAPSHOT</version>
     <name>config-library</name>
     <description>UnionVMS configuration management.</description>
 
@@ -48,7 +48,7 @@
 
     <scm>
       <connection>scm:git:https://github.com/UnionVMS/UVMS-UVMSConfigLibrary.git</connection>
-      <tag>config-library-4.0.2-W14-J8</tag>
+      <tag>HEAD</tag>
     </scm>
 
     <profiles>
