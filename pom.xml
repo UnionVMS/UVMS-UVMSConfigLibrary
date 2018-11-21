@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.europa.ec.fisheries.uvms</groupId>
-    <artifactId>uvms-config</artifactId>
+    <artifactId>config-library</artifactId>
     <packaging>jar</packaging>
     <version>4.0.3-SNAPSHOT</version>
-    <name>uvms-config</name>
+    <name>config-library</name>
     <description>UnionVMS configuration management.</description>
 
     <parent>
@@ -18,7 +18,7 @@
         <project.scm.id>github</project.scm.id>
         <scm.connection>scm:git:https://github.com/UnionVMS/UVMS-UVMSConfigLibrary.git</scm.connection>
         <scm.url>scm:git:https://github.com/UnionVMS/UVMS-UVMSConfigLibrary.git</scm.url>
-        <javaee.version>7.0</javaee.version>
+        <javaee.version>8.0</javaee.version>
         <sl4j.version>1.7.25</sl4j.version>
 		<config.model.version>4.0.0</config.model.version>
         <project.scm.id>github</project.scm.id>
