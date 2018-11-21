@@ -37,11 +37,14 @@ public class ConfigInitializer {
     @PostConstruct
     protected void startup() {
         ExecutorService executor = Executors.newFixedThreadPool(1);
-        executor.submit(() -> {
-            try {
-                configService.syncSettingsWithConfig();
-            } catch (ConfigServiceException e) {
-                LOG.error("[ Error when synchronizing settings with Config at startup. ]");
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    configService.syncSettingsWithConfig();
+                } catch (ConfigServiceException e) {
+                    LOG.error("[ Error when synchronizing settings with Config at startup. ]");
+                }
             }
         });
     }
