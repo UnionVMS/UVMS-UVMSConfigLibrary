@@ -11,21 +11,20 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.config.service;
 
+import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.DependsOn;
 import javax.ejb.EJB;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-@Singleton
-@Startup
-@DependsOn("UVMSConfigServiceBean")
+@Stateless
+@LocalBean
 public class PingTimer {
 
     private static final Logger LOG = LoggerFactory.getLogger(PingTimer.class);
@@ -33,12 +32,18 @@ public class PingTimer {
     @EJB
     private UVMSConfigService configService;
 
-    @PostConstruct
-    public void sendPing() {
-        LOG.info("PingTimer init");
+    public void schedulePinger() {
+        LOG.info("[START] PingTimer init..");
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-        PingTask checkCommunicationTask = new PingTask(configService);
-        executor.scheduleWithFixedDelay(checkCommunicationTask, 5, 5, TimeUnit.MINUTES);
+        executor.scheduleWithFixedDelay(()-> {
+            try {
+                LOG.info("Ping time arrived!");
+                configService.sendPing();
+            } catch (ConfigServiceException e) {
+                LOG.error("[ERROR] Error when sending ping to Config {}", e);
+            }
+        }, 5, 5, TimeUnit.MINUTES);
+        LOG.info("[END] PingTimer.sendPing() scheduled each 5 minutes!");
     }
 
 }

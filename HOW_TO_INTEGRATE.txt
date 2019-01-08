@@ -53,7 +53,7 @@ Integration with this module is easy if the following steps are followed correct
                     <jta-data-source>jdbc/uvms_config</jta-data-source>
                     <class>eu.europa.ec.fisheries.uvms.config.service.entity.Parameter</class>
                     <properties>
-                        <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+                        <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect"/>
                     </properties>
                 </persistence-unit>
 

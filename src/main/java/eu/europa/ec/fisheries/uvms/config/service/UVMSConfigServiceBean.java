@@ -32,9 +32,8 @@ import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleResponseMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.DependsOn;
 import javax.ejb.EJB;
-import javax.ejb.Singleton;
+import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.jms.JMSException;
@@ -42,8 +41,7 @@ import javax.jms.TextMessage;
 import java.util.ArrayList;
 import java.util.List;
 
-@Singleton
-@DependsOn("ParameterServiceBean")
+@Stateless
 public class UVMSConfigServiceBean implements UVMSConfigService {
 
     private final static Logger LOG = LoggerFactory.getLogger(UVMSConfigServiceBean.class);

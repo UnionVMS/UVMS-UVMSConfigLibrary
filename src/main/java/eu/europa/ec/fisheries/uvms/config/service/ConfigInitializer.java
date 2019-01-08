@@ -11,22 +11,20 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.config.service;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.DependsOn;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-
+import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import java.util.concurrent.ExecutorService;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Singleton
 @Startup
-@DependsOn("UVMSConfigServiceBean")
 public class ConfigInitializer {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigInitializer.class);
@@ -34,15 +32,22 @@ public class ConfigInitializer {
     @EJB
     private UVMSConfigService configService;
 
+    @EJB
+    private PingTimer pinger;
+
     @PostConstruct
     protected void startup() {
-        ExecutorService executor = Executors.newFixedThreadPool(1);
-        executor.submit(() -> {
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        executor.schedule(() -> {
             try {
+                LOG.info("[CONFIG-STARTUP] Starting up config settings sync!");
                 configService.syncSettingsWithConfig();
+                LOG.info("[SYNC-END] Finished synching settings!");
+                pinger.schedulePinger();
             } catch (ConfigServiceException e) {
-                LOG.error("[ Error when synchronizing settings with Config at startup. ]");
+                LOG.error("[ERROR] Error when sending ping to Config {}", e);
             }
-        });
+        }, 20, TimeUnit.SECONDS);
     }
+
 }
