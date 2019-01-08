@@ -64,6 +64,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
 
     @Override
     public void syncSettingsWithConfig() throws ConfigServiceException {
+
         try {
             boolean pullSuccess = pullSettingsFromConfig();
             if (!pullSuccess) {
