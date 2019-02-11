@@ -64,7 +64,6 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
 
     @Override
     public void syncSettingsWithConfig() throws ConfigServiceException {
-
         try {
             boolean pullSuccess = pullSettingsFromConfig();
             if (!pullSuccess) {
@@ -92,7 +91,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
 				throw new ConfigServiceException("SettingEventType " + eventType + " not implemented");
 			}
         } catch (Exception e) {
-			LOG.error("[ Error when updating setting. ]", e.getMessage());
+			LOG.error("[ Error when updating setting. ] {} SETTING : {}", e.getMessage(), setting);
 			throw new ConfigServiceException(e.getMessage());
 		}
 		settingUpdated.fire(new ConfigSettingEvent(configSettingEventType, setting.getKey()));

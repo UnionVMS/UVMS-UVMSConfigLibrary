@@ -36,7 +36,7 @@ public class Parameter implements Serializable {
 
     public static final String FIND_BY_ID = "Parameter.findByName";
     public static final String LIST_ALL = "Parameter.listAll";
-    public static final String LIST_ALL_BY_IDS = "Paramater.listAllByIds";
+    public static final String LIST_ALL_BY_IDS = "Parameter.listAllByIds";
 
     private static final long serialVersionUID = 1L;
 

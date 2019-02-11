@@ -17,5 +17,9 @@ public class ConfigServiceException extends ConfigException {
 
     public ConfigServiceException(String message) {
         super(message);
-    }   
+    }
+
+    public ConfigServiceException(String message, Throwable th) {
+        super(message, th);
+    }
 }

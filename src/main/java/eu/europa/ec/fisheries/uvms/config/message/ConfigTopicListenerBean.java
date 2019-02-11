@@ -11,17 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package eu.europa.ec.fisheries.uvms.config.message;
 
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.MessageDriven;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.TextMessage;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import eu.europa.ec.fisheries.schema.config.module.v1.ConfigTopicBaseRequest;
 import eu.europa.ec.fisheries.schema.config.module.v1.PushModuleSettingMessage;
 import eu.europa.ec.fisheries.schema.config.types.v1.SettingType;
@@ -31,18 +20,26 @@ import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
 import eu.europa.ec.fisheries.uvms.config.model.exception.ModelMarshallException;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.config.service.UVMSConfigService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
+import javax.ejb.MessageDriven;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.TextMessage;
 
 //@formatter:off
 @MessageDriven(mappedName = ConfigConstants.CONFIG_STATUS_TOPIC, activationConfig = {
-		@ActivationConfigProperty(propertyName = "messagingType", propertyValue = ConfigConstants.CONNECTION_TYPE_MESSAGE_LISTENER),
-		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = ConfigConstants.DESTINATION_TYPE_TOPIC),
-		@ActivationConfigProperty(propertyName = "destination", propertyValue = ConfigConstants.CONFIG_STATUS_TOPIC_NAME)
+        @ActivationConfigProperty(propertyName = "messagingType", propertyValue = ConfigConstants.CONNECTION_TYPE_MESSAGE_LISTENER),
+        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = ConfigConstants.DESTINATION_TYPE_TOPIC),
+        @ActivationConfigProperty(propertyName = "destination", propertyValue = ConfigConstants.CONFIG_STATUS_TOPIC_NAME)
 })
 //@formatter:on
 public class ConfigTopicListenerBean implements MessageListener {
 
-    final static Logger LOG = LoggerFactory.getLogger(ConfigTopicListenerBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigTopicListenerBean.class);
 
     @EJB
     private UVMSConfigService configService;
@@ -50,31 +47,30 @@ public class ConfigTopicListenerBean implements MessageListener {
     @EJB
     private ConfigHelper configHelper;
 
-	@Override
-	public void onMessage(Message message) {
-		TextMessage textMessage = (TextMessage) message;
+    @Override
+    public void onMessage(Message message) {
+        TextMessage textMessage = (TextMessage) message;
         try {
             ConfigTopicBaseRequest baseRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, ConfigTopicBaseRequest.class);
             switch (baseRequest.getStatus()) {
-            case DEPLOYED:
-                configService.syncSettingsWithConfig();
-                break;
-            case SETTING_CHANGED:
-            	PushModuleSettingMessage pushMessage = JAXBMarshaller.unmarshallTextMessage(textMessage, PushModuleSettingMessage.class);
-                SettingType setting = pushMessage.getSetting();
-            	if (!ignoreModule(setting.getModule())) {
-            		configService.updateSetting(setting, pushMessage.getAction());
-            	}
-
-            	break;
+                case DEPLOYED:
+                    configService.syncSettingsWithConfig();
+                    break;
+                case SETTING_CHANGED:
+                    PushModuleSettingMessage pushMessage = JAXBMarshaller.unmarshallTextMessage(textMessage, PushModuleSettingMessage.class);
+                    SettingType setting = pushMessage.getSetting();
+                    if (!ignoreModule(setting.getModule())) {
+                        configService.updateSetting(setting, pushMessage.getAction());
+                    }
+                    break;
             }
         } catch (ConfigServiceException | ModelMarshallException e) {
             LOG.error("[ Error when synchronizing settings with Config. ] {}", e.getMessage());
         }
     }
 
-	private boolean ignoreModule(String moduleName) {
-		return moduleName != null && !moduleName.equals(configHelper.getModuleName());
-	}
+    private boolean ignoreModule(String moduleName) {
+        return moduleName != null && !moduleName.equals(configHelper.getModuleName());
+    }
 
 }

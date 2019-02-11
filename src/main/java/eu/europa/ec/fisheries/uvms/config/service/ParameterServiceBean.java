@@ -44,8 +44,8 @@ public class ParameterServiceBean implements ParameterService {
             query.setParameter("id", key);
             return query.getSingleResult().getParamValue();
         } catch (RuntimeException e) {
-            LOG.error("[ Error when getting String value ] {}", e);
-            throw new ConfigServiceException("[ Error when getting String value. ]");
+            LOG.error("[ Error when getting String value ]");
+            throw new ConfigServiceException("[ Error when getting String value. ]", e);
         }
     }
 
@@ -59,8 +59,8 @@ public class ParameterServiceBean implements ParameterService {
             configHelper.getEntityManager().flush();
             return true;
         } catch (RuntimeException e) {
-            LOG.error("[ Error when remove parameter " + key + " ]", e);
-            throw new ConfigServiceException("[ Error when remove parameter " + key + " ]");
+            LOG.error("[ Error when remove parameter " + key + " ]");
+            throw new ConfigServiceException("[ Error when remove parameter " + key + " ]", e);
         }
     }
 
@@ -68,7 +68,6 @@ public class ParameterServiceBean implements ParameterService {
         try {
             TypedQuery<Parameter> query = configHelper.getEntityManager().createNamedQuery(Parameter.LIST_ALL_BY_IDS, Parameter.class);
             query.setParameter("ids", keys);
-
             List<SettingType> settings = new ArrayList<>();
             for (Parameter parameter : query.getResultList()) {
                 SettingType setting = new SettingType();
@@ -77,11 +76,10 @@ public class ParameterServiceBean implements ParameterService {
                 setting.setDescription(parameter.getParamDescription());
                 settings.add(setting);
             }
-
             return settings;
         } catch (RuntimeException e) {
-            LOG.error("[ Error when getting settings by IDs. ] {}", e);
-            throw new ConfigServiceException("[ Error when getting settings by IDs. ]");
+            LOG.error("[ Error when getting settings by IDs ]");
+            throw new ConfigServiceException("[ Error when getting settings by IDs. ]", e);
         }
     }
 
@@ -99,8 +97,8 @@ public class ParameterServiceBean implements ParameterService {
             }
             return settings;
         } catch (RuntimeException e) {
-            LOG.error("[ Error when getting all settings. ] {}", e);
-            throw new ConfigServiceException("[ Error when getting all settings. ]");
+            LOG.error("[ Error when getting all settings. ]");
+            throw new ConfigServiceException("[ Error when getting all settings. ]", e);
         }
     }
 
@@ -121,9 +119,7 @@ public class ParameterServiceBean implements ParameterService {
             } else {
                 if (parameters != null && !parameters.isEmpty()) {
                     // Remove all parameters occurring more than once
-                    for (Parameter parameter : parameters) {
-                        configHelper.getEntityManager().remove(parameter);
-                    }
+                    removeParameters(parameters);
                 }
                 // Create new parameter
                 LOG.info("[INFO] Creating new parameter {} = {}", key, value);
@@ -135,9 +131,16 @@ public class ParameterServiceBean implements ParameterService {
                 LOG.info("[END] New parameter created!");
             }
             return true;
-        } catch (RuntimeException e) {
-            LOG.error("[ Error when setting String value. ] {}={}, {}", key, value, description, e);
-            throw new ConfigServiceException("[ Error when setting String value. ]");
+        } catch (Exception e) {
+            LOG.error("[ Error when setting String value. ] Key = {} : Value = {}, Descr = {}", key, value, description);
+            throw new ConfigServiceException("[ Error when setting String value. ]", e);
+        }
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    private void removeParameters(List<Parameter> parameters) {
+        for (Parameter parameter : parameters) {
+            configHelper.getEntityManager().remove(parameter);
         }
     }
 
@@ -146,8 +149,8 @@ public class ParameterServiceBean implements ParameterService {
         try {
             return parseBooleanValue(getStringValue(key));
         } catch (Exception e) {
-            LOG.error("[ Error when getting Boolean value. ]", e);
-            throw new ConfigServiceException("[ Error when getting Boolean value. ]");
+            LOG.error("[ Error when getting Boolean value. ]");
+            throw new ConfigServiceException("[ Error when getting Boolean value. ]", e);
         }
     }
 
@@ -159,7 +162,7 @@ public class ParameterServiceBean implements ParameterService {
             query.setParameter("id", key);
             parameters = query.getResultList();
         } catch (Exception e) {
-            LOG.error("[ Error when removing parameters. ]", e);
+            LOG.error("[ Error when removing parameters. ]");
             throw new ConfigServiceException(e.getMessage());
         }
         //TODO: No, fix this!
@@ -167,7 +170,7 @@ public class ParameterServiceBean implements ParameterService {
             try {
                 configHelper.getEntityManager().remove(parameter);
             } catch (Exception e) {
-                LOG.error("[ Error when removing parameter. ]", e);
+                LOG.error("[ Error when removing parameter. ]");
             }
         }
     }
@@ -179,8 +182,8 @@ public class ParameterServiceBean implements ParameterService {
             TypedQuery<Parameter> query = configHelper.getEntityManager().createNamedQuery(Parameter.LIST_ALL, Parameter.class);
             parameters = query.getResultList();
         } catch (Exception e) {
-            LOG.error("[ Error when clearing all settings. ] ", e);
-            throw new ConfigServiceException("[ Error when clearing all settings. ]");
+            LOG.error("[ERROR] Error when clearing all settings :  {}");
+            throw new ConfigServiceException("[ Error when clearing all settings. ]", e);
         }
 
         for (Parameter parameter : parameters) {
