@@ -119,13 +119,15 @@ public class ParameterServiceBean implements ParameterService {
             TypedQuery<Parameter> query = configHelper.getEntityManager().createNamedQuery(Parameter.FIND_BY_ID, Parameter.class);
             query.setParameter("id", key);
             List<Parameter> parameters = query.getResultList();
-            LOG.info("[END] Setting ResultSet size is {} (size > 0 => exists)", parameters != null ? parameters.size() : 0);
-            if (parameters != null && parameters.size() == 1) { // Update existing parameter
+            int paramsResultSize = parameters != null ? parameters.size() : 0;
+            LOG.info("[END] Setting ResultSet size is {} (size > 0 => exists)", paramsResultSize);
+            if (paramsResultSize == 1) { // Update existing parameter
                 LOG.info("[INFO] Update existing parameter..");
                 parameters.get(0).setParamValue(value);
                 LOG.info("[END] Parameter updated [ {} = {} ]..", key, value);
             } else {
-                if (parameters != null && !parameters.isEmpty()) {
+                if (paramsResultSize > 0) {
+                    LOG.info("[INFO] Removeing parameter list : {}", parameters);
                     removeParameters(parameters); // Remove all parameters occurring more than once
                 }
                 createParameter(key, value, description);
@@ -141,14 +143,16 @@ public class ParameterServiceBean implements ParameterService {
     private void createParameter(String key, String value, String description) {
         try {
             LOG.info("[INFO] Creating new parameter {} = {}", key, value);
+            EntityManager em = configHelper.getEntityManager();
             Parameter parameter = new Parameter();
             parameter.setParamId(key);
             parameter.setParamDescription(description != null ? description : "-");
             parameter.setParamValue(value);
-            configHelper.getEntityManager().persist(parameter);
+            em.persist(parameter);
+            em.flush();
             LOG.info("[END] New parameter created!");
         } catch (Exception ex){
-            LOG.error("Error while creating new parameter (maybe duplicated) [ {} ]", ex.getMessage());
+            LOG.warn("Error while creating new parameter (maybe duplicated) [ {} ] [{}={}]", ex.getMessage(), key, value);
         }
     }
 
@@ -189,7 +193,7 @@ public class ParameterServiceBean implements ParameterService {
         try {
             Query query = entityManager.createNamedQuery(Parameter.DELETE_ALL);
             query.executeUpdate();
-            LOG.info("Parameters table cleared!\n\n");
+            LOG.info("Parameters table cleared!\n");
         } catch (Exception e) {
             LOG.error("[ERROR] Error when clearing all settings :  {}");
             throw new ConfigServiceException("[ Error when clearing all settings. ]", e);
