@@ -19,16 +19,15 @@ import eu.europa.ec.fisheries.uvms.config.service.entity.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.ejb.*;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-@Stateless
+@Singleton
 @Transactional
 public class ParameterServiceBean implements ParameterService {
 
@@ -38,7 +37,7 @@ public class ParameterServiceBean implements ParameterService {
     private ConfigHelper configHelper;
 
     @Override
-    public String getStringValue(String key) throws ConfigServiceException {
+    public String getParamValueById(String key) throws ConfigServiceException {
         try {
             TypedQuery<Parameter> query = configHelper.getEntityManager().createNamedQuery(Parameter.FIND_BY_ID, Parameter.class);
             query.setParameter("id", key);
@@ -52,16 +51,25 @@ public class ParameterServiceBean implements ParameterService {
     @Override
     public boolean removeParameter(String key) throws ConfigServiceException {
         try {
-            TypedQuery<Parameter> query = configHelper.getEntityManager().createNamedQuery(Parameter.FIND_BY_ID, Parameter.class);
+            TypedQuery<Parameter> query = configHelper.getEntityManager().createNamedQuery(Parameter.DELETE_BY_ID, Parameter.class);
             query.setParameter("id", key);
-            Parameter parameter = query.getSingleResult();
-            configHelper.getEntityManager().remove(parameter);
-            configHelper.getEntityManager().flush();
+            query.executeUpdate();
             return true;
         } catch (RuntimeException e) {
             LOG.error("[ Error when remove parameter " + key + " ]");
             throw new ConfigServiceException("[ Error when remove parameter " + key + " ]", e);
         }
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    private void removeParameters(List<Parameter> parameters) {
+        List<String> paramIds = new ArrayList<>();
+        for (Parameter parameter : parameters) {
+            paramIds.add(parameter.getParamId());
+        }
+        TypedQuery<Parameter> query = configHelper.getEntityManager().createNamedQuery(Parameter.DELETE_BY_IDS_LIST, Parameter.class);
+        query.setParameter("ids", paramIds);
+        query.executeUpdate();
     }
 
     public List<SettingType> getSettings(List<String> keys) throws ConfigServiceException {
@@ -104,50 +112,58 @@ public class ParameterServiceBean implements ParameterService {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @Lock(LockType.WRITE)
     public boolean setStringValue(String key, String value, String description) throws ConfigServiceException {
         try {
             LOG.info("[INFO] Get setting by key [{}]", key);
             TypedQuery<Parameter> query = configHelper.getEntityManager().createNamedQuery(Parameter.FIND_BY_ID, Parameter.class);
             query.setParameter("id", key);
             List<Parameter> parameters = query.getResultList();
-            LOG.info("[END] Setting exists and ResultSet size is {}", parameters != null ? parameters.size() : 0);
-            if (parameters != null && parameters.size() == 1) {
-                // Update existing parameter
+            LOG.info("[END] Setting ResultSet size is {} (size > 0 => exists)", parameters != null ? parameters.size() : 0);
+            if (parameters != null && parameters.size() == 1) { // Update existing parameter
                 LOG.info("[INFO] Update existing parameter..");
                 parameters.get(0).setParamValue(value);
                 LOG.info("[END] Parameter updated [ {} = {} ]..", key, value);
             } else {
                 if (parameters != null && !parameters.isEmpty()) {
-                    // Remove all parameters occurring more than once
-                    removeParameters(parameters);
+                    removeParameters(parameters); // Remove all parameters occurring more than once
                 }
-                // Create new parameter
-                LOG.info("[INFO] Creating new parameter {} = {}", key, value);
-                Parameter parameter = new Parameter();
-                parameter.setParamId(key);
-                parameter.setParamDescription(description != null ? description : "-");
-                parameter.setParamValue(value);
-                configHelper.getEntityManager().persist(parameter);
-                LOG.info("[END] New parameter created!");
+                createParameter(key, value, description);
             }
             return true;
         } catch (Exception e) {
-            LOG.error("[ Error when setting String value. ] Key = {} : Value = {}, Descr = {}", key, value, description);
+            LOG.error("[ Error when setting String value. ] Key = {} : Value = {}, Descr = {}, EXC : {}", key, value, description, e.getMessage());
             throw new ConfigServiceException("[ Error when setting String value. ]", e);
         }
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    private void removeParameters(List<Parameter> parameters) {
-        for (Parameter parameter : parameters) {
-            configHelper.getEntityManager().remove(parameter);
+    private void createParameter(String key, String value, String description) {
+        try {
+            LOG.info("[INFO] Creating new parameter {} = {}", key, value);
+            Parameter parameter = new Parameter();
+            parameter.setParamId(key);
+            parameter.setParamDescription(description != null ? description : "-");
+            parameter.setParamValue(value);
+            configHelper.getEntityManager().persist(parameter);
+            LOG.info("[END] New parameter created!");
+        } catch (Exception ex){
+            LOG.error("Error while creating new parameter (maybe duplicated) [ {} ]", ex.getMessage());
         }
     }
 
     @Override
     public Boolean getBooleanValue(String key) throws ConfigServiceException {
         try {
-            return parseBooleanValue(getStringValue(key));
+            String value = getParamValueById(key);
+            if (value.equalsIgnoreCase("true")) {
+                return Boolean.TRUE;
+            } else if (value.equalsIgnoreCase("false")) {
+                return Boolean.FALSE;
+            } else {
+                LOG.error("[ Error when parsing Boolean value from String, The String provided dows not equal 'TRUE' or 'FALSE'. The value is {} ]", value);
+                throw new InputArgumentException("The String value provided does not equal boolean value, value provided = " + value);
+            }
         } catch (Exception e) {
             LOG.error("[ Error when getting Boolean value. ]");
             throw new ConfigServiceException("[ Error when getting Boolean value. ]", e);
@@ -156,53 +172,34 @@ public class ParameterServiceBean implements ParameterService {
 
     @Override
     public void reset(String key) throws ConfigServiceException {
-        List<Parameter> parameters;
         try {
-            TypedQuery<Parameter> query = configHelper.getEntityManager().createNamedQuery(Parameter.FIND_BY_ID, Parameter.class);
+            TypedQuery<Parameter> query = configHelper.getEntityManager().createNamedQuery(Parameter.DELETE_BY_ID, Parameter.class);
             query.setParameter("id", key);
-            parameters = query.getResultList();
+            query.executeUpdate();
         } catch (Exception e) {
             LOG.error("[ Error when removing parameters. ]");
             throw new ConfigServiceException(e.getMessage());
         }
-        //TODO: No, fix this!
-        for (Parameter parameter : parameters) {
-            try {
-                configHelper.getEntityManager().remove(parameter);
-            } catch (Exception e) {
-                LOG.error("[ Error when removing parameter. ]");
-            }
-        }
     }
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void clearAll() throws ConfigServiceException {
-        List<Parameter> parameters;
+        EntityManager entityManager = configHelper.getEntityManager();
         try {
-            TypedQuery<Parameter> query = configHelper.getEntityManager().createNamedQuery(Parameter.LIST_ALL, Parameter.class);
-            parameters = query.getResultList();
+            Query query = entityManager.createNamedQuery(Parameter.DELETE_ALL);
+            query.executeUpdate();
+            LOG.info("Parameters table cleared!\n\n");
         } catch (Exception e) {
             LOG.error("[ERROR] Error when clearing all settings :  {}");
             throw new ConfigServiceException("[ Error when clearing all settings. ]", e);
         }
-
-        for (Parameter parameter : parameters) {
-            try {
-                configHelper.getEntityManager().remove(parameter);
-            } catch (Exception e) {
-                LOG.error("[ Error when removing parameter. ]", e);
-            }
-        }
     }
 
-    private Boolean parseBooleanValue(String value) throws InputArgumentException {
-        if (value.equalsIgnoreCase("true")) {
-            return Boolean.TRUE;
-        } else if (value.equalsIgnoreCase("false")) {
-            return Boolean.FALSE;
-        } else {
-            LOG.error("[ Error when parsing Boolean value from String, The String provided dows not equal 'TRUE' or 'FALSE'. The value is {} ]", value);
-            throw new InputArgumentException("The String value provided does not equal boolean value, value provided = " + value);
-        }
+    @Override
+    public Long countParameters() {
+        Query namedQuery = configHelper.getEntityManager().createNamedQuery(Parameter.COUNT);
+        return (Long) namedQuery.getSingleResult();
     }
+
 }

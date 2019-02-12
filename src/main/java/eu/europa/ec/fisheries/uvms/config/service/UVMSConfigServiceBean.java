@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.jms.JMSException;
@@ -73,12 +75,13 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
                 }
             }
         } catch (ConfigMessageException | ModelMarshallException e) {
-            LOG.error("[ Error when synchronizing settings with Config module. ] {}", e.getMessage());
+            LOG.error("[ Error when synchronizing settings with Config module. ] {}", e.getCause());
             throw new ConfigServiceException(e.getMessage());
         }
     }
 
 	@Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public void updateSetting(SettingType setting, SettingEventType eventType) throws ConfigServiceException {
 		ConfigSettingEventType configSettingEventType = ConfigSettingEventType.UPDATE;
 		try {
@@ -169,13 +172,14 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
         return true;
     }
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private void storeSettings(List<SettingType> settings) throws ConfigServiceException {
         parameterService.clearAll();
         for (SettingType setting: settings) {
             try {
                 parameterService.setStringValue(setting.getKey(), setting.getValue(), setting.getDescription());
             } catch (Exception e) {
-                LOG.error("[ Error when storing setting. ]", e);
+                LOG.error("[ Error when storing setting. ], Exc : {}", e.getCause());
             }
         }
         settingUpdated.fire(new ConfigSettingEvent(ConfigSettingEventType.STORE));

@@ -27,7 +27,7 @@ public interface ParameterService {
      * @return a string representation of the parameter value
      * @throws ConfigServiceException if unsuccessful
      */
-    String getStringValue(String key) throws ConfigServiceException;
+    String getParamValueById(String key) throws ConfigServiceException;
 
     /**
      * Remove the parameter by key
@@ -85,4 +85,6 @@ public interface ParameterService {
      * @throws ConfigServiceException if unsuccessful
      */
     void clearAll() throws ConfigServiceException;
+
+    Long countParameters();
 }
