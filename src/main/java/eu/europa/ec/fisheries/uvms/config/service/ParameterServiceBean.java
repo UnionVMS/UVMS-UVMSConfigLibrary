@@ -20,12 +20,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
-import javax.ejb.Singleton;
+import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
 
-@Singleton
+@Stateless
 public class ParameterServiceBean implements ParameterService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ParameterServiceBean.class);
