@@ -24,8 +24,6 @@ import eu.europa.ec.fisheries.uvms.config.exception.ConfigMessageException;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
 import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageConsumer;
 import eu.europa.ec.fisheries.uvms.config.message.ConfigMessageProducer;
-import eu.europa.ec.fisheries.uvms.config.model.exception.ModelMapperException;
-import eu.europa.ec.fisheries.uvms.config.model.exception.ModelMarshallException;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.JAXBMarshaller;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleRequestMapper;
 import eu.europa.ec.fisheries.uvms.config.model.mapper.ModuleResponseMapper;
@@ -36,7 +34,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +70,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
                     throw new ConfigMessageException("Failed to push missing settings to Config.");
                 }
             }
-        } catch (ConfigMessageException | ModelMarshallException e) {
+        } catch (ConfigMessageException e) {
             LOG.error("[ Error when synchronizing settings with Config module. ] {}", e.getMessage());
             throw new ConfigServiceException(e.getMessage());
         }
@@ -101,9 +98,8 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
     /**
      * @return true if settings were pulled successful, or false if they are
      * missing in the Config module
-     * @throws ModelMarshallException 
      */
-    private boolean pullSettingsFromConfig() throws ModelMarshallException, ConfigMessageException, ConfigServiceException {
+    private boolean pullSettingsFromConfig() throws ConfigMessageException, ConfigServiceException {
         String request = ModuleRequestMapper.toPullSettingsRequest(configHelper.getModuleName());
         TextMessage response = sendSyncronousMsgWithResponseToConfig(request);
         PullSettingsResponse pullResponse = JAXBMarshaller.unmarshallTextMessage(response, PullSettingsResponse.class);
@@ -126,7 +122,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
     		}
     		sendSyncronousMsgWithResponseToConfig(request);
     		return true;
-        } catch (ModelMarshallException | ConfigMessageException e) {
+        } catch (ConfigMessageException e) {
         	return false;
         }
 	}
@@ -141,7 +137,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
                 settings = getSettingsWithKeyPrefix(settings, keyPrefix);
             }
             return settings;
-        } catch (ConfigMessageException | ModelMapperException | JMSException e) {
+        } catch (ConfigMessageException e) {
             LOG.error("[ Error when getting settings with key prefix. ] {}", e.getMessage());
             throw new ConfigServiceException("[ Error when getting settings with key prefix. ]");
         }
@@ -154,10 +150,9 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
 
     /**
      * @return true if settings were pushed successfully
-     * @throws ModelMarshallException
-     * @throws ConfigMessageException 
+     * @throws ConfigMessageException
      */
-    private boolean pushSettingsToConfig() throws ConfigServiceException, ModelMarshallException, ConfigMessageException {
+    private boolean pushSettingsToConfig() throws ConfigServiceException, ConfigMessageException {
         String moduleName = configHelper.getModuleName();
         List<SettingType> moduleSettings = parameterService.getSettings(configHelper.getAllParameterKeys());
         String request = ModuleRequestMapper.toPushSettingsRequest(moduleName, moduleSettings, "UVMS");
@@ -186,7 +181,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
     public void sendPing() throws ConfigServiceException {
         try {
             producer.sendConfigMessage(ModuleRequestMapper.toPingRequest(configHelper.getModuleName()));
-        } catch (ConfigMessageException | ModelMapperException e) {
+        } catch (ConfigMessageException e) {
             LOG.error("[ Error when sending ping to config. ] {}", e.getMessage());
             throw new ConfigServiceException(e.getMessage());
         }

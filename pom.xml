@@ -18,9 +18,8 @@
         <project.scm.id>github</project.scm.id>
         <scm.connection>scm:git:https://github.com/UnionVMS/UVMS-UVMSConfigLibrary.git</scm.connection>
         <scm.url>scm:git:https://github.com/UnionVMS/UVMS-UVMSConfigLibrary.git</scm.url>
-        <javaee.version>7.0</javaee.version>
-        <sl4j.version>1.7.25</sl4j.version>
-		<config.model.version>4.0.0</config.model.version>
+        <javaee.version>8.0</javaee.version>
+		<config.model.version>4.1.2</config.model.version>
         <project.scm.id>github</project.scm.id>
         <focus-pom.java.version>1.8</focus-pom.java.version>
     </properties>
@@ -94,9 +93,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${sl4j.version}</version>
+            <groupId>fish.focus.uvms.maven</groupId>
+            <artifactId>uvms-pom-logging-deps</artifactId>
+            <version>1.24</version>
+            <type>pom</type>
         </dependency>
 		<dependency>
             <groupId>eu.europa.ec.fisheries.uvms.config</groupId>
@@ -107,7 +107,7 @@
         <dependency>
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-lang3</artifactId>
-		    <version>3.6</version>
+		    <version>3.9</version>
 		</dependency>		        
 		<dependency>
 			<groupId>javax</groupId>
