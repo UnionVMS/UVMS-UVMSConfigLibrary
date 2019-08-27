@@ -14,7 +14,6 @@ package eu.europa.ec.fisheries.uvms.config.service;
 import eu.europa.ec.fisheries.schema.config.types.v1.SettingType;
 import eu.europa.ec.fisheries.uvms.config.constants.ConfigHelper;
 import eu.europa.ec.fisheries.uvms.config.exception.ConfigServiceException;
-import eu.europa.ec.fisheries.uvms.config.model.exception.InputArgumentException;
 import eu.europa.ec.fisheries.uvms.config.service.entity.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -193,7 +192,7 @@ public class ParameterServiceBean implements ParameterService {
         }
     }
 
-    private Boolean parseBooleanValue(String value) throws InputArgumentException {
+    private Boolean parseBooleanValue(String value) {
         if (value.equalsIgnoreCase("true")) {
             return Boolean.TRUE;
         }
@@ -202,7 +201,7 @@ public class ParameterServiceBean implements ParameterService {
         }
         else {
             LOG.error("[ Error when parsing Boolean value from String, The String provided dows not equal 'TRUE' or 'FALSE'. The value is {} ]", value);
-            throw new InputArgumentException("The String value provided does not equal boolean value, value provided = " + value);
+            throw new RuntimeException("The String value provided does not equal boolean value, value provided = " + value);
         }
     }
 }
