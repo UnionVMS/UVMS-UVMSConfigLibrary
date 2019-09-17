@@ -1,120 +1,120 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>eu.europa.ec.fisheries.uvms</groupId>
-    <artifactId>config-library</artifactId>
-    <packaging>jar</packaging>
-    <version>4.1-SNAPSHOT</version>
-    <name>config-library</name>
-    <description>UnionVMS configuration management.</description>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>eu.europa.ec.fisheries.uvms</groupId>
+  <artifactId>config-library</artifactId>
+  <packaging>jar</packaging>
+  <version>4.2-SNAPSHOT</version>
+  <name>config-library</name>
+  <description>UnionVMS configuration management.</description>
 
-    <parent>
-        <groupId>fish.focus.maven</groupId>
-	    <artifactId>focus-pom</artifactId>
-	    <version>1.14</version>
-        <relativePath />
-    </parent>
+  <parent>
+    <groupId>fish.focus.maven</groupId>
+    <artifactId>focus-pom</artifactId>
+    <version>1.14</version>
+    <relativePath/>
+  </parent>
 
-    <properties>
-        <project.scm.id>github</project.scm.id>
-        <scm.connection>scm:git:https://github.com/UnionVMS/UVMS-UVMSConfigLibrary.git</scm.connection>
-        <scm.url>scm:git:https://github.com/UnionVMS/UVMS-UVMSConfigLibrary.git</scm.url>
-        <javaee.version>8.0</javaee.version>
-        <sl4j.version>1.7.25</sl4j.version>
-		<config.model.version>4.0.0</config.model.version>
-        <project.scm.id>github</project.scm.id>
-        <focus-pom.java.version>1.8</focus-pom.java.version>
-    </properties>
+  <properties>
+    <project.scm.id>github</project.scm.id>
+    <scm.connection>scm:git:https://github.com/UnionVMS/UVMS-UVMSConfigLibrary.git</scm.connection>
+    <scm.url>scm:git:https://github.com/UnionVMS/UVMS-UVMSConfigLibrary.git</scm.url>
+    <javaee.version>8.0</javaee.version>
+    <sl4j.version>1.7.25</sl4j.version>
+    <config.model.version>4.0.14-SNAPSHOT</config.model.version>
+    <project.scm.id>github</project.scm.id>
+    <focus-pom.java.version>1.8</focus-pom.java.version>
+  </properties>
 
-    <repositories>
-        <repository>
-            <id>focus-repo</id>
-            <name>Focus nexus repository</name>
-            <url>http://nexus.focus.fish/nexus/</url>
-        </repository>
-    </repositories>
+  <repositories>
+    <repository>
+      <id>focus-repo</id>
+      <name>Focus nexus repository</name>
+      <url>http://nexus.focus.fish/nexus/</url>
+    </repository>
+  </repositories>
 
-    <distributionManagement> 
-        <repository>
-            <id>focus-releases</id>
-            <name>UnionVms Repository</name>
-            <url>http://nexus.focus.fish/nexus/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>focus-snapshots</id>
-            <name>UnionVms Snapshot Repository</name>
-            <url>http://nexus.focus.fish/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
+  <distributionManagement>
+    <repository>
+      <id>focus-releases</id>
+      <name>UnionVms Repository</name>
+      <url>http://nexus.focus.fish/nexus/content/repositories/releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>focus-snapshots</id>
+      <name>UnionVms Snapshot Repository</name>
+      <url>http://nexus.focus.fish/nexus/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
 
-    <scm>
-      <connection>scm:git:https://github.com/UnionVMS/UVMS-UVMSConfigLibrary.git</connection>
-      <tag>HEAD</tag>
-    </scm>
+  <scm>
+    <connection>scm:git:https://github.com/UnionVMS/UVMS-UVMSConfigLibrary.git</connection>
+    <tag>HEAD</tag>
+  </scm>
 
-    <profiles>
-        <!-- enforce-jdk-version -->
-        <profile>
-            <id>enforce-jdk-version</id>
-            <activation>
-                <!-- To disable profile, define property -Dfocus-pom.enforce.jdk.version.disabled=true -->
-                <property>
-                    <name>!focus-pom.enforce.jdk.version.disabled</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-enforcer-plugin</artifactId>
-                        <inherited>false</inherited>
-                        <executions>
-                            <execution>
-                                <id>enforce-jdk-version</id>
-                                <goals>
-                                    <goal>enforce</goal>
-                                </goals>
-                                <configuration>
-                                    <rules>
-                                        <enforceBytecodeVersion>
-                                            <maxJdkVersion>${focus-pom.java.version}</maxJdkVersion>
-                                            <!-- NOTE: xstream do contain support for multiple jdk:s -->
-                                            <excludes>
-                                                <exclude>com.thoughtworks.xstream:xstream</exclude>
-                                            </excludes>
-                                        </enforceBytecodeVersion>
-                                    </rules>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+  <profiles>
+    <!-- enforce-jdk-version -->
+    <profile>
+      <id>enforce-jdk-version</id>
+      <activation>
+        <!-- To disable profile, define property -Dfocus-pom.enforce.jdk.version.disabled=true -->
+        <property>
+          <name>!focus-pom.enforce.jdk.version.disabled</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <id>enforce-jdk-version</id>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <enforceBytecodeVersion>
+                      <maxJdkVersion>${focus-pom.java.version}</maxJdkVersion>
+                      <!-- NOTE: xstream do contain support for multiple jdk:s -->
+                      <excludes>
+                        <exclude>com.thoughtworks.xstream:xstream</exclude>
+                      </excludes>
+                    </enforceBytecodeVersion>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${sl4j.version}</version>
-        </dependency>
-		<dependency>
-            <groupId>eu.europa.ec.fisheries.uvms.config</groupId>
-            <artifactId>config-model</artifactId>
-            <version>${config.model.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-		    <groupId>org.apache.commons</groupId>
-		    <artifactId>commons-lang3</artifactId>
-		    <version>3.6</version>
-		</dependency>		        
-		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<scope>provided</scope>
-			<version>${javaee.version}</version>
-		</dependency>
-	</dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${sl4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>eu.europa.ec.fisheries.uvms.config</groupId>
+      <artifactId>config-model</artifactId>
+      <version>${config.model.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.6</version>
+    </dependency>
+    <dependency>
+      <groupId>javax</groupId>
+      <artifactId>javaee-api</artifactId>
+      <scope>provided</scope>
+      <version>${javaee.version}</version>
+    </dependency>
+  </dependencies>
 
 </project>
