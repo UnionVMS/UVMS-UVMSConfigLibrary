@@ -3,16 +3,16 @@
   <groupId>eu.europa.ec.fisheries.uvms</groupId>
   <artifactId>config-library</artifactId>
   <packaging>jar</packaging>
-  <version>4.2-SNAPSHOT</version>
+  <version>${uvms.config.library.version}</version>
   <name>config-library</name>
   <description>UnionVMS configuration management.</description>
 
-  <parent>
-    <groupId>fish.focus.maven</groupId>
-    <artifactId>focus-pom</artifactId>
-    <version>1.14</version>
-    <relativePath/>
-  </parent>
+    <parent>
+		<groupId>eu.europa.ec.fisheries.uvms</groupId>
+		<artifactId>mare-pom</artifactId>
+		<version>1.6.0-MARE</version>
+		<relativePath />
+    </parent>
 
   <properties>
     <project.scm.id>github</project.scm.id>
@@ -20,7 +20,7 @@
     <scm.url>scm:git:https://github.com/UnionVMS/UVMS-UVMSConfigLibrary.git</scm.url>
     <javaee.version>8.0</javaee.version>
     <sl4j.version>1.7.25</sl4j.version>
-    <config.model.version>4.0.14-SNAPSHOT</config.model.version>
+    <config.model.version>${uvms.config.module.version}</config.model.version>
     <project.scm.id>github</project.scm.id>
     <focus-pom.java.version>1.8</focus-pom.java.version>
   </properties>
