@@ -12,7 +12,7 @@
         <artifactId>uvms-pom</artifactId>
         <version>3.0</version>
     </parent>
-
+ 
     <properties>
         <project.scm.id>github</project.scm.id>
         <scm.connection>scm:git:https://github.com/UnionVMS/UVMS-UVMSConfigLibrary.git</scm.connection>
