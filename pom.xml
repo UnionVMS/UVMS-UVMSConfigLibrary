@@ -8,20 +8,18 @@
     <description>UnionVMS configuration management.</description>
 
     <parent>
-        <groupId>fish.focus.maven</groupId>
-	    <artifactId>focus-pom</artifactId>
-	    <version>1.14</version>
-        <relativePath />
+        <groupId>fish.focus.uvms.maven</groupId>
+        <artifactId>uvms-pom</artifactId>
+        <version>3.0</version>
     </parent>
 
     <properties>
         <project.scm.id>github</project.scm.id>
         <scm.connection>scm:git:https://github.com/UnionVMS/UVMS-UVMSConfigLibrary.git</scm.connection>
         <scm.url>scm:git:https://github.com/UnionVMS/UVMS-UVMSConfigLibrary.git</scm.url>
-        <javaee.version>8.0</javaee.version>
-		<config.model.version>4.1.2</config.model.version>
+		<config.model.version>4.1.3</config.model.version>
         <project.scm.id>github</project.scm.id>
-        <focus-pom.java.version>1.8</focus-pom.java.version>
+        <uvms.pom.version>3.0</uvms.pom.version>
     </properties>
 
     <repositories>
@@ -50,52 +48,11 @@
       <tag>HEAD</tag>
     </scm>
 
-    <profiles>
-        <!-- enforce-jdk-version -->
-        <profile>
-            <id>enforce-jdk-version</id>
-            <activation>
-                <!-- To disable profile, define property -Dfocus-pom.enforce.jdk.version.disabled=true -->
-                <property>
-                    <name>!focus-pom.enforce.jdk.version.disabled</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-enforcer-plugin</artifactId>
-                        <inherited>false</inherited>
-                        <executions>
-                            <execution>
-                                <id>enforce-jdk-version</id>
-                                <goals>
-                                    <goal>enforce</goal>
-                                </goals>
-                                <configuration>
-                                    <rules>
-                                        <enforceBytecodeVersion>
-                                            <maxJdkVersion>${focus-pom.java.version}</maxJdkVersion>
-                                            <!-- NOTE: xstream do contain support for multiple jdk:s -->
-                                            <excludes>
-                                                <exclude>com.thoughtworks.xstream:xstream</exclude>
-                                            </excludes>
-                                        </enforceBytecodeVersion>
-                                    </rules>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
     <dependencies>
         <dependency>
             <groupId>fish.focus.uvms.maven</groupId>
             <artifactId>uvms-pom-logging-deps</artifactId>
-            <version>1.24</version>
+            <version>${uvms.pom.version}</version>
             <type>pom</type>
         </dependency>
 		<dependency>
@@ -107,14 +64,12 @@
         <dependency>
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-lang3</artifactId>
-		    <version>3.9</version>
 		</dependency>		        
 		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<scope>provided</scope>
-			<version>${javaee.version}</version>
-		</dependency>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 	</dependencies>
 
 </project>
