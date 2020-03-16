@@ -30,15 +30,14 @@ import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
 //@formatter:off
-@MessageDriven(mappedName = ConfigConstants.CONFIG_STATUS_TOPIC, activationConfig = {
-		@ActivationConfigProperty(propertyName = "messagingType", propertyValue = ConfigConstants.CONNECTION_TYPE_MESSAGE_LISTENER),
+@MessageDriven(activationConfig = {
 		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = ConfigConstants.DESTINATION_TYPE_TOPIC),
-		@ActivationConfigProperty(propertyName = "destination", propertyValue = ConfigConstants.CONFIG_STATUS_TOPIC_NAME)
+		@ActivationConfigProperty(propertyName = "destination", propertyValue = ConfigConstants.CONFIG_STATUS_TOPIC)
 })
 //@formatter:on
 public class ConfigTopicListenerBean implements MessageListener {
 
-    final static Logger LOG = LoggerFactory.getLogger(ConfigTopicListenerBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigTopicListenerBean.class);
 
     @EJB
     private UVMSConfigService configService;
