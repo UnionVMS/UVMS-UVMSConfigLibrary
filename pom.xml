@@ -19,7 +19,7 @@
         <scm.url>scm:git:https://github.com/UnionVMS/UVMS-UVMSConfigLibrary.git</scm.url>
 		<config.model.version>4.3.3</config.model.version>
         <project.scm.id>github</project.scm.id>
-        <uvms.pom.version>3.0</uvms.pom.version>
+        <uvms.pom.version>3.1</uvms.pom.version>
     </properties>
 
     <repositories>
