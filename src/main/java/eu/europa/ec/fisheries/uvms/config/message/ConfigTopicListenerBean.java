@@ -32,7 +32,7 @@ import javax.jms.TextMessage;
 //@formatter:off
 @MessageDriven(activationConfig = {
 		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = ConfigConstants.DESTINATION_TYPE_TOPIC),
-		@ActivationConfigProperty(propertyName = "destination", propertyValue = ConfigConstants.CONFIG_STATUS_TOPIC)
+		@ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = ConfigConstants.CONFIG_STATUS_TOPIC)
 })
 //@formatter:on
 public class ConfigTopicListenerBean implements MessageListener {
