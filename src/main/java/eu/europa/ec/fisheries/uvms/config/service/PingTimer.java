@@ -40,7 +40,7 @@ public class PingTimer {
                 LOG.info("Ping time arrived!");
                 configService.sendPing();
             } catch (ConfigServiceException e) {
-                LOG.error("[ERROR] Error when sending ping to Config {}", e);
+                LOG.error("[ERROR] Error when sending ping to Config ", e);
             }
         }, 5, 5, TimeUnit.MINUTES);
         LOG.info("[END] PingTimer.sendPing() scheduled each 5 minutes!");

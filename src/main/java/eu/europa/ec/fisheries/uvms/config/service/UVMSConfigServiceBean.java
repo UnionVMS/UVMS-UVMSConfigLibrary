@@ -74,8 +74,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
                 }
             }
         } catch (ConfigMessageException | ModelMarshallException e) {
-            LOG.error("[ Error when synchronizing settings with Config module. ] {}", e.getCause());
-            throw new ConfigServiceException(e.getMessage());
+            throw new ConfigServiceException("Error when synchronizing settings with Config module",e);
         }
     }
 
@@ -93,8 +92,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
 				throw new ConfigServiceException("SettingEventType " + eventType + " not implemented");
 			}
         } catch (Exception e) {
-			LOG.error("[ Error when updating setting. ] {} SETTING : {}", e.getMessage(), setting);
-			throw new ConfigServiceException(e.getMessage());
+			throw new ConfigServiceException("Error when updating setting: " + setting,e);
 		}
 		settingUpdated.fire(new ConfigSettingEvent(configSettingEventType, setting.getKey()));
 	}
@@ -128,6 +126,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
     		sendSyncronousMsgWithResponseToConfig(request);
     		return true;
         } catch (ModelMarshallException | ConfigMessageException e) {
+    	    LOG.info("Settings were not pushed to config",e);
         	return false;
         }
 	}
@@ -143,8 +142,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
             }
             return settings;
         } catch (ConfigMessageException | ModelMapperException | JMSException e) {
-            LOG.error("[ Error when getting settings with key prefix. ] {}", e.getMessage());
-            throw new ConfigServiceException("[ Error when getting settings with key prefix. ]");
+            throw new ConfigServiceException("Error when getting settings with key prefix.",e);
         }
     }
 
@@ -179,7 +177,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
             try {
                 parameterService.setStringValue(setting.getKey(), setting.getValue(), setting.getDescription());
             } catch (Exception e) {
-                LOG.error("[ Error when storing setting. ], Exc : {}", e.getCause());
+                LOG.error("Error when storing setting.", e);
             }
         }
         settingUpdated.fire(new ConfigSettingEvent(ConfigSettingEventType.STORE));
@@ -190,8 +188,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
         try {
             producer.sendConfigMessage(ModuleRequestMapper.toPingRequest(configHelper.getModuleName()));
         } catch (ConfigMessageException | ModelMapperException e) {
-            LOG.error("[ Error when sending ping to config. ] {}", e.getMessage());
-            throw new ConfigServiceException(e.getMessage());
+            throw new ConfigServiceException("Error when sending ping to config",e);
         }
     }
 

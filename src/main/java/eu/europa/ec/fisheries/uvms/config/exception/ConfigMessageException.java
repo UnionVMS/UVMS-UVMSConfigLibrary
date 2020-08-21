@@ -18,4 +18,8 @@ public class ConfigMessageException extends ConfigException {
 	public ConfigMessageException(String message) {
 		super(message);
 	}
+
+	public ConfigMessageException(String message, Throwable th) {
+		super(message, th);
+	}
 }

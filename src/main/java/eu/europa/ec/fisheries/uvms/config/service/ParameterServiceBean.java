@@ -43,8 +43,7 @@ public class ParameterServiceBean implements ParameterService {
             query.setParameter("id", key);
             return query.getSingleResult().getParamValue();
         } catch (RuntimeException e) {
-            LOG.error("[ Error when getting String value ]");
-            throw new ConfigServiceException("[ Error when getting String value. ]", e);
+            throw new ConfigServiceException("Error when getting String value.", e);
         }
     }
 
@@ -56,8 +55,7 @@ public class ParameterServiceBean implements ParameterService {
             query.executeUpdate();
             return true;
         } catch (RuntimeException e) {
-            LOG.error("[ Error when remove parameter " + key + " ]");
-            throw new ConfigServiceException("[ Error when remove parameter " + key + " ]", e);
+            throw new ConfigServiceException("Error when remove parameter " + key , e);
         }
     }
 
@@ -86,8 +84,7 @@ public class ParameterServiceBean implements ParameterService {
             }
             return settings;
         } catch (RuntimeException e) {
-            LOG.error("[ Error when getting settings by IDs ]");
-            throw new ConfigServiceException("[ Error when getting settings by IDs. ]", e);
+            throw new ConfigServiceException("Error when getting settings by IDs.", e);
         }
     }
 
@@ -105,8 +102,7 @@ public class ParameterServiceBean implements ParameterService {
             }
             return settings;
         } catch (RuntimeException e) {
-            LOG.error("[ Error when getting all settings. ]");
-            throw new ConfigServiceException("[ Error when getting all settings. ]", e);
+            throw new ConfigServiceException("Error when getting all settings.", e);
         }
     }
 
@@ -134,8 +130,7 @@ public class ParameterServiceBean implements ParameterService {
             }
             return true;
         } catch (Exception e) {
-            LOG.error("[ Error when setting String value. ] Key = {} : Value = {}, Descr = {}, EXC : {}", key, value, description, e.getMessage());
-            throw new ConfigServiceException("[ Error when setting String value. ]", e);
+            throw new ConfigServiceException("Error when setting String value. Key = " + key + " Value =" + value + " Descr ="+description, e);
         }
     }
 
@@ -152,7 +147,7 @@ public class ParameterServiceBean implements ParameterService {
             em.flush();
             LOG.info("[END] New parameter created!");
         } catch (Exception ex){
-            LOG.warn("Error while creating new parameter (maybe duplicated) [ {} ] [{}={}]", ex.getMessage(), key, value);
+            LOG.warn("Error while creating new parameter (maybe duplicated) for key: " + key + " and value: " + value, ex);
         }
     }
 
@@ -169,8 +164,7 @@ public class ParameterServiceBean implements ParameterService {
                 throw new InputArgumentException("The String value provided does not equal boolean value, value provided = " + value);
             }
         } catch (Exception e) {
-            LOG.error("[ Error when getting Boolean value. ]");
-            throw new ConfigServiceException("[ Error when getting Boolean value. ]", e);
+            throw new ConfigServiceException("Error when getting Boolean value.", e);
         }
     }
 
@@ -181,8 +175,7 @@ public class ParameterServiceBean implements ParameterService {
             query.setParameter("id", key);
             query.executeUpdate();
         } catch (Exception e) {
-            LOG.error("[ Error when removing parameters. ]");
-            throw new ConfigServiceException(e.getMessage());
+            throw new ConfigServiceException("Error when removing parameters.",e);
         }
     }
 
@@ -195,7 +188,6 @@ public class ParameterServiceBean implements ParameterService {
             query.executeUpdate();
             LOG.info("Parameters table cleared!\n");
         } catch (Exception e) {
-            LOG.error("[ERROR] Error when clearing all settings :  {}");
             throw new ConfigServiceException("[ Error when clearing all settings. ]", e);
         }
     }

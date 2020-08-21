@@ -45,7 +45,7 @@ public class ConfigInitializer {
                 LOG.info("[SYNC-END] Finished synching settings!");
                 pinger.schedulePinger();
             } catch (ConfigServiceException e) {
-                LOG.error("[ERROR] Error when sending ping to Config {}", e);
+                LOG.error("[ERROR] Error when sending ping to Config", e);
             }
         }, 20, TimeUnit.SECONDS);
     }

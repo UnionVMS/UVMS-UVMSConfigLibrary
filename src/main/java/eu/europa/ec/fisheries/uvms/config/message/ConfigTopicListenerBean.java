@@ -65,7 +65,7 @@ public class ConfigTopicListenerBean implements MessageListener {
                     break;
             }
         } catch (ConfigServiceException | ModelMarshallException e) {
-            LOG.error("[ Error when synchronizing settings with Config. ] {}", e.getMessage());
+            LOG.error("Error when synchronizing settings with Config.", e);
         }
     }
 
