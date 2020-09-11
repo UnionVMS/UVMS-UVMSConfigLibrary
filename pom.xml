@@ -49,12 +49,6 @@
     </scm>
 
     <dependencies>
-        <dependency>
-            <groupId>fish.focus.uvms.maven</groupId>
-            <artifactId>uvms-pom-logging-deps</artifactId>
-            <version>${uvms.pom.version}</version>
-            <type>pom</type>
-        </dependency>
 		<dependency>
             <groupId>eu.europa.ec.fisheries.uvms.config</groupId>
             <artifactId>config-model</artifactId>
