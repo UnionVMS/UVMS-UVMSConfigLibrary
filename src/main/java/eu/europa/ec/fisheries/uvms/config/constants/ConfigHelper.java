@@ -21,7 +21,9 @@ public interface ConfigHelper {
 
 	List<String> getAllParameterKeys();
 
-	String getModuleName();	
+	String getModuleName();
+
+	String getModuleVersion();
 	
 	EntityManager getEntityManager();
 
