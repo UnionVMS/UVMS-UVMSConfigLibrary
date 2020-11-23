@@ -186,7 +186,7 @@ public class UVMSConfigServiceBean implements UVMSConfigService {
     @Override
     public void sendPing() throws ConfigServiceException {
         try {
-            producer.sendConfigMessage(ModuleRequestMapper.toPingRequest(configHelper.getModuleName()));
+            producer.sendConfigMessage(ModuleRequestMapper.toPingRequest(configHelper.getModuleName(), configHelper.getModuleVersion()));
         } catch (ConfigMessageException | ModelMapperException e) {
             throw new ConfigServiceException("Error when sending ping to config",e);
         }
